@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <iframe title="wireframe-Or9Xj2F2rtpuqLmiCzxo" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;pt-BR&quot;&gt;
+&lt;head&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css&quot;&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;&gt;
+    &lt;title&gt;Tarefito - Histórico de Conquistas&lt;/title&gt;
+    &lt;script src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;
+    &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;600;700;800;900&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;script&gt; window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js&quot; crossorigin=&quot;anonymous&quot; referrerpolicy=&quot;no-referrer&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.plot.ly/plotly-3.1.1.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['&quot;Fredoka One&quot;', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
+                        },
+                        dark: {
+                            bg: '#0b0e14',
+                            surface: '#161b22',
+                            card: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(168,85,247,0.5)',
+                        'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
+                        'neon-green': '0 0 15px rgba(34,197,94,0.5)',
+                        'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
+                        'neon-cyan': '0 0 15px rgba(6,182,212,0.5)',
+                        'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
+                        'btn-press': 'inset 0 4px 6px rgba(0,0,0,0.3)'
+                    },
+                    backgroundImage: {
+                        'radial-burst': 'radial-gradient(circle at center, #1e1b4b 0%, #0b0e14 100%)',
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)'
+                    }
+                }
+            }
+        }
+    &lt;/script&gt;
+    &lt;style&gt;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0e14;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-gaming {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .input-gaming:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5), inset 0 0 10px rgba(168,85,247,0.2);
+            outline: none;
+        }
+
+        .btn-gaming {
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-gaming:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4) !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            display: none; 
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22c55e;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: rgba(34,197,94,0.2);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            background-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.8);
+        }
+        
+        .toggle-label {
+            width: 48px;
+            height: 24px;
+            background-color: #161b22;
+            border: 2px solid #4b5563;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .radio-gaming:checked + div {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5);
+            background-color: rgba(168,85,247,0.1);
+        }
+        .radio-gaming:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .progress-bar-animated {
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .chat-bubble-user {
+            border-radius: 20px 20px 0 20px;
+        }
+        .chat-bubble-bot {
+            border-radius: 20px 20px 20px 0;
+        }
+        
+        .heatmap-cell {
+            transition: all 0.2s ease;
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+        }
+
+        /* Timeline specific styles */
+        .timeline-line {
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #a855f7, #3b82f6);
+            z-index: 0;
+        }
+        
+        .timeline-node-active {
+            box-shadow: 0 0 15px rgba(168,85,247,0.8);
+            animation: pulse-glow 2s infinite;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class=&quot;min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0&quot;&gt;
+
+    &lt;!-- Background Effects --&gt;
+    &lt;div class=&quot;fixed inset-0 pointer-events-none z-0&quot;&gt;
+        &lt;div class=&quot;absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-purple opacity-10 blur-[100px]&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-blue opacity-10 blur-[120px]&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;absolute top-[40%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-neon-cyan opacity-5 blur-[80px]&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Main Container - Mobile First (375x840 target) --&gt;
+    &lt;main class=&quot;w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 pb-24&quot;&gt;
+        
+        &lt;!-- Top Navigation / Header --&gt;
+        &lt;header id=&quot;app-header&quot; class=&quot;w-full flex items-center justify-between px-6 py-5 sticky top-0 bg-dark-bg/80 backdrop-blur-md z-50 border-b border-gray-800&quot;&gt;
+            &lt;button class=&quot;w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors&quot;&gt;
+                &lt;i class=&quot;fa-solid fa-arrow-left&quot;&gt;&lt;/i&gt;
+            &lt;/button&gt;
+            &lt;h1 class=&quot;font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple&quot;&gt;
+                Histórico
+            &lt;/h1&gt;
+            &lt;button class=&quot;w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors relative&quot;&gt;
+                &lt;i class=&quot;fa-solid fa-gear&quot;&gt;&lt;/i&gt;
+            &lt;/button&gt;
+        &lt;/header&gt;
+
+        &lt;div class=&quot;px-5 py-6 flex flex-col gap-6 flex-1 overflow-y-auto&quot;&gt;
+
+            &lt;!-- Profile Summary Section --&gt;
+            &lt;section id=&quot;profile-summary&quot; class=&quot;glass-panel rounded-[24px] p-5 border border-neon-purple/30 flex items-center gap-4 relative overflow-hidden&quot;&gt;
+                &lt;div class=&quot;absolute -right-10 -top-10 w-32 h-32 bg-neon-purple/20 rounded-full blur-[20px]&quot;&gt;&lt;/div&gt;
+                
+                &lt;div class=&quot;w-16 h-16 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center overflow-hidden shrink-0&quot;&gt;
+                    &lt;img class=&quot;w-full h-full object-cover&quot; src=&quot;https://storage.googleapis.com/uxpilot-auth.appspot.com/1adba5cff0-22b7ecee7dd45b17e285.png&quot; alt=&quot;Avatar LeoNinja&quot; /&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;flex flex-col flex-1&quot;&gt;
+                    &lt;h2 class=&quot;font-display text-lg text-white&quot;&gt;LeoNinja&lt;/h2&gt;
+                    &lt;div class=&quot;flex items-center gap-2 mt-1&quot;&gt;
+                        &lt;span class=&quot;text-xs font-bold text-neon-purple bg-neon-purple/10 px-2 py-0.5 rounded-full border border-neon-purple/30&quot;&gt;Nvl. 12&lt;/span&gt;
+                        &lt;span class=&quot;text-xs text-gray-400 font-bold&quot;&gt;142 Conquistas&lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;w-10 h-10 rounded-xl bg-neon-blue/20 border border-neon-blue flex items-center justify-center text-neon-blue shrink-0&quot;&gt;
+                    &lt;i class=&quot;fa-solid fa-share-nodes&quot;&gt;&lt;/i&gt;
+                &lt;/div&gt;
+            &lt;/section&gt;
+
+            &lt;!-- Filters Section --&gt;
+            &lt;section id=&quot;achievements-filters&quot; class=&quot;flex flex-col gap-3&quot;&gt;
+                &lt;div class=&quot;flex gap-2 overflow-x-auto pb-2 scrollbar-hide&quot;&gt;
+                    &lt;button class=&quot;shrink-0 px-4 py-2 rounded-full bg-neon-purple/20 border border-neon-purple text-neon-purple font-bold text-sm shadow-[0_0_10px_rgba(168,85,247,0.3)]&quot;&gt;
+                        Tudo
+                    &lt;/button&gt;
+                    &lt;button class=&quot;shrink-0 px-4 py-2 rounded-full bg-dark-surface border border-gray-700 text-gray-400 font-bold text-sm hover:border-gray-500 transition-colors&quot;&gt;
+                        Badges
+                    &lt;/button&gt;
+                    &lt;button class=&quot;shrink-0 px-4 py-2 rounded-full bg-dark-surface border border-gray-700 text-gray-400 font-bold text-sm hover:border-gray-500 transition-colors&quot;&gt;
+                        Streaks
+                    &lt;/button&gt;
+                    &lt;button class=&quot;shrink-0 px-4 py-2 rounded-full bg-dark-surface border border-gray-700 text-gray-400 font-bold text-sm hover:border-gray-500 transition-colors&quot;&gt;
+                        Missões
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/section&gt;
+
+            &lt;!-- Streak Heatmap / Progress Trend Chart Section --&gt;
+            &lt;section id=&quot;streak-chart-section&quot; class=&quot;flex flex-col gap-4&quot;&gt;
+                &lt;div class=&quot;flex justify-between items-center&quot;&gt;
+                    &lt;h3 class=&quot;font-display text-lg text-white&quot;&gt;Progresso de XP&lt;/h3&gt;
+                    &lt;span class=&quot;text-[10px] text-neon-cyan font-bold uppercase&quot;&gt;Últimos 7 dias&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;glass-panel rounded-[24px] p-4 border border-neon-blue/30 h-[200px] relative&quot;&gt;
+                     &lt;div id=&quot;xp-trend-chart&quot; class=&quot;w-full h-full&quot;&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/section&gt;
+
+            &lt;!-- Achievement Path Timeline Section --&gt;
+            &lt;section id=&quot;achievement-timeline&quot; class=&quot;flex flex-col gap-6 relative mt-4&quot;&gt;
+                &lt;h3 class=&quot;font-display text-lg text-white mb-2&quot;&gt;Jornada Estelar&lt;/h3&gt;
+                
+                &lt;div class=&quot;relative pl-12 flex flex-col gap-8&quot;&gt;
+                    &lt;!-- Timeline Line Background --&gt;
+                    &lt;div class=&quot;timeline-line&quot;&gt;&lt;/div&gt;
+
+                    &lt;!-- Milestone 1: Unlocked Badge (Detailed Card) --&gt;
+                    &lt;div class=&quot;relative z-10 w-full group cursor-pointer&quot; onclick=&quot;document.getElementById('badge-modal').classList.remove('hidden')&quot;&gt;
+                        &lt;!-- Node --&gt;
+                        &lt;div class=&quot;absolute -left-12 top-4 w-6 h-6 rounded-full bg-dark-bg border-4 border-neon-purple timeline-node-active flex items-center justify-center&quot;&gt;
+                            &lt;div class=&quot;w-2 h-2 rounded-full bg-neon-purple&quot;&gt;&lt;/div&gt;
+                        &lt;/div&gt;
+                        
+                        &lt;!-- Content Card --&gt;
+                        &lt;div class=&quot;glass-panel rounded-[20px] p-4 border border-neon-purple/50 shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:border-neon-purple transition-colors relative overflow-hidden&quot;&gt;
+                            &lt;div class=&quot;absolute top-0 right-0 w-20 h-20 bg-neon-purple/10 rounded-bl-full pointer-events-none&quot;&gt;&lt;/div&gt;
+                            
+                            &lt;div class=&quot;flex gap-4 items-start&quot;&gt;
+                                &lt;div class=&quot;w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1e1b4b] to-neon-purple p-0.5 shadow-neon-purple shrink-0&quot;&gt;
+                                    &lt;div class=&quot;w-full h-full rounded-2xl bg-dark-bg flex items-center justify-center&quot;&gt;
+                                        &lt;i class=&quot;fa-solid fa-dragon text-2xl text-neon-purple floating-element&quot;&gt;&lt;/i&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                                &lt;div class=&quot;flex flex-col flex-1&quot;&gt;
+                                    &lt;div class=&quot;flex justify-between items-start&quot;&gt;
+                                        &lt;h4 class=&quot;font-bold text-white text-base leading-tight&quot;&gt;Mestre dos Dragões&lt;/h4&gt;
+                                        &lt;span class=&quot;text-[10px] text-gray-400 font-bold&quot;&gt;Hoje&lt;/span&gt;
+                                    &lt;/div&gt;
+                                    &lt;p class=&quot;text-xs text-gray-400 mt-1 line-clamp-2&quot;&gt;Completou 5 missões difíceis em um único dia.&lt;/p&gt;
+                                    
+                                    &lt;div class=&quot;flex items-center gap-2 mt-3&quot;&gt;
+                                        &lt;span class=&quot;text-[10px] font-bold text-neon-purple bg-neon-purple/10 px-2 py-1 rounded-md border border-neon-purple/30&quot;&gt;Badge Épico&lt;/span&gt;
+                                        &lt;span class=&quot;text-[10px] font-bold text-yellow-400 flex items-center gap-1&quot;&gt;&lt;i class=&quot;fa-solid fa-star&quot;&gt;&lt;/i&gt; +500&lt;/span&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Milestone 2: Unlocked Streak --&gt;
+                    &lt;div class=&quot;relative z-10 w-full&quot;&gt;
+                        &lt;!-- Node --&gt;
+                        &lt;div class=&quot;absolute -left-12 top-4 w-6 h-6 rounded-full bg-dark-bg border-4 border-neon-blue flex items-center justify-center&quot;&gt;
+                            &lt;div class=&quot;w-2 h-2 rounded-full bg-neon-blue&quot;&gt;&lt;/div&gt;
+                        &lt;/div&gt;
+                        
+                        &lt;!-- Content Card --&gt;
+                        &lt;div class=&quot;glass-panel rounded-[20px] p-4 border border-neon-blue/30 hover:border-neon-blue/60 transition-colors&quot;&gt;
+                            &lt;div class=&quot;flex gap-4 items-center&quot;&gt;
+                                &lt;div class=&quot;w-12 h-12 rounded-full bg-neon-blue/20 border border-neon-blue flex items-center justify-center shrink-0&quot;&gt;
+                                    &lt;i class=&quot;fa-solid fa-fire text-neon-blue text-xl&quot;&gt;&lt;/i&gt;
+                                &lt;/div&gt;
+                                &lt;div class=&quot;flex flex-col flex-1&quot;&gt;
+                                    &lt;h4 class=&quot;font-bold text-white text-sm&quot;&gt;7 Dias de Fogo!&lt;/h4&gt;
+                                    &lt;span class=&quot;text-[10px] text-gray-400 font-bold&quot;&gt;Ontem&lt;/span&gt;
+                                &lt;/div&gt;
+                                &lt;div class=&quot;text-right&quot;&gt;
+                                    &lt;span class=&quot;text-xs font-bold text-neon-blue&quot;&gt;+200 XP&lt;/span&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Milestone 3: Unlocked Level --&gt;
+                    &lt;div class=&quot;relative z-10 w-full&quot;&gt;
+                        &lt;!-- Node --&gt;
+                        &lt;div class=&quot;absolute -left-12 top-4 w-6 h-6 rounded-full bg-dark-bg border-4 border-neon-green flex items-center justify-center&quot;&gt;
+                            &lt;div class=&quot;w-2 h-2 rounded-full bg-neon-green&quot;&gt;&lt;/div&gt;
+                        &lt;/div&gt;
+                        
+                        &lt;!-- Content Card --&gt;
+                        &lt;div class=&quot;glass-panel rounded-[20px] p-4 border border-neon-green/30 hover:border-neon-green/60 transition-colors&quot;&gt;
+                            &lt;div class=&quot;flex gap-4 items-center&quot;&gt;
+                                &lt;div class=&quot;w-12 h-12 rounded-full bg-neon-green/20 border border-neon-green flex items-center justify-center shrink-0&quot;&gt;
+                                    &lt;i class=&quot;fa-solid fa-arrow-up-right-dots text-neon-green text-xl&quot;&gt;&lt;/i&gt;
+                                &lt;/div&gt;
+                                &lt;div class=&quot;flex flex-col flex-1&quot;&gt;
+                                    &lt;h4 class=&quot;font-bold text-white text-sm&quot;&gt;Nível 12 Alcançado&lt;/h4&gt;
+                                    &lt;span class=&quot;text-[10px] text-gray-400 font-bold&quot;&gt;Há 3 dias&lt;/span&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Milestone 4: Locked Objective (Grayscale) --&gt;
+                    &lt;div class=&quot;relative z-10 w-full opacity-60&quot;&gt;
+                        &lt;!-- Node --&gt;
+                        &lt;div class=&quot;absolute -left-12 top-4 w-6 h-6 rounded-full bg-dark-bg border-4 border-gray-600 flex items-center justify-center&quot;&gt;
+                            &lt;div class=&quot;w-2 h-2 rounded-full bg-gray-600&quot;&gt;&lt;/div&gt;
+                        &lt;/div&gt;
+                        
+                        &lt;!-- Content Card --&gt;
+                        &lt;div class=&quot;glass-panel rounded-[20px] p-4 border border-gray-700 bg-dark-surface&quot;&gt;
+                            &lt;div class=&quot;flex gap-4 items-center&quot;&gt;
+                                &lt;div class=&quot;w-12 h-12 rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center shrink-0&quot;&gt;
+                                    &lt;i class=&quot;fa-solid fa-lock text-gray-400 text-lg&quot;&gt;&lt;/i&gt;
+                                &lt;/div&gt;
+                                &lt;div class=&quot;flex flex-col flex-1&quot;&gt;
+                                    &lt;h4 class=&quot;font-bold text-gray-400 text-sm&quot;&gt;Próximo: Guardião Estelar&lt;/h4&gt;
+                                    &lt;div class=&quot;w-full h-1.5 bg-dark-bg rounded-full mt-2 overflow-hidden&quot;&gt;
+                                        &lt;div class=&quot;h-full bg-gray-500 w-[60%]&quot;&gt;&lt;/div&gt;
+                                    &lt;/div&gt;
+                                    &lt;span class=&quot;text-[10px] text-gray-500 font-bold mt-1&quot;&gt;3/5 Missões Épicas&lt;/span&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/section&gt;
+
+        &lt;/div&gt;
+
+        &lt;!-- Bottom Navigation Bar --&gt;
+        &lt;nav class=&quot;fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50&quot;&gt;
+            &lt;div class=&quot;max-w-[430px] mx-auto flex justify-around items-center h-20 px-2&quot;&gt;
+                &lt;!-- Dashboard Criança (Inactive) --&gt;
+                &lt;a href=&quot;#&quot; class=&quot;flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors&quot;&gt;
+                    &lt;i class=&quot;fa-solid fa-gamepad text-xl mb-1&quot;&gt;&lt;/i&gt;
+                    &lt;span class=&quot;text-[9px] font-bold uppercase&quot;&gt;Dashboard&lt;/span&gt;
+                &lt;/a&gt;
+                
+                &lt;!-- Loja (Inactive) --&gt;
+                &lt;a href=&quot;#&quot; class=&quot;flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors&quot;&gt;
+                    &lt;i class=&quot;fa-solid fa-gift text-xl mb-1&quot;&gt;&lt;/i&gt;
+                    &lt;span class=&quot;text-[9px] font-bold uppercase&quot;&gt;Loja&lt;/span&gt;
+                &lt;/a&gt;
+                
+                &lt;!-- Perfil/Progresso (Inactive) --&gt;
+                &lt;a href=&quot;#&quot; class=&quot;flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors&quot;&gt;
+                    &lt;i class=&quot;fa-solid fa-user-astronaut text-xl mb-1&quot;&gt;&lt;/i&gt;
+                    &lt;span class=&quot;text-[9px] font-bold uppercase&quot;&gt;Perfil&lt;/span&gt;
+                &lt;/a&gt;
+                
+                &lt;!-- Histórico (Active) --&gt;
+                &lt;a href=&quot;#&quot; class=&quot;flex flex-col items-center justify-center w-20 h-full relative group&quot;&gt;
+                    &lt;div class=&quot;absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform&quot;&gt;
+                        &lt;i class=&quot;fa-solid fa-clock-rotate-left text-neon-purple text-xl&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                    &lt;span class=&quot;text-[9px] font-bold uppercase text-neon-purple mt-8&quot;&gt;Histórico&lt;/span&gt;
+                &lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/nav&gt;
+
+    &lt;/main&gt;
+
+    &lt;!-- Badge Detail Modal (Hidden by default) --&gt;
+    &lt;div id=&quot;badge-modal&quot; class=&quot;fixed inset-0 z-[100] hidden flex items-center justify-center p-4&quot;&gt;
+        &lt;div class=&quot;absolute inset-0 bg-black/80 backdrop-blur-sm&quot; onclick=&quot;document.getElementById('badge-modal').classList.add('hidden')&quot;&gt;&lt;/div&gt;
+        
+        &lt;div class=&quot;glass-panel rounded-[32px] w-full max-w-[340px] p-6 border-2 border-neon-purple/50 shadow-[0_0_30px_rgba(168,85,247,0.3)] relative z-10 flex flex-col items-center text-center animate-pulse-glow&quot; style=&quot;animation-iteration-count: 1;&quot;&gt;
+            &lt;button class=&quot;absolute top-4 right-4 w-8 h-8 rounded-full bg-dark-surface border border-gray-600 flex items-center justify-center text-gray-400 hover:text-white transition-colors&quot; onclick=&quot;document.getElementById('badge-modal').classList.add('hidden')&quot;&gt;
+                &lt;i class=&quot;fa-solid fa-xmark&quot;&gt;&lt;/i&gt;
+            &lt;/button&gt;
+            
+            &lt;div class=&quot;w-32 h-32 rounded-full bg-gradient-to-br from-[#1e1b4b] to-neon-purple p-1 shadow-[0_0_20px_rgba(168,85,247,0.8)] mb-6 relative mt-4&quot;&gt;
+                &lt;div class=&quot;w-full h-full rounded-full bg-dark-bg flex items-center justify-center&quot;&gt;
+                    &lt;i class=&quot;fa-solid fa-dragon text-5xl text-neon-purple floating-element&quot;&gt;&lt;/i&gt;
+                &lt;/div&gt;
+                &lt;!-- Sparkles --&gt;
+                &lt;i class=&quot;fa-solid fa-sparkles absolute -top-2 -right-2 text-yellow-400 text-xl&quot;&gt;&lt;/i&gt;
+                &lt;i class=&quot;fa-solid fa-sparkles absolute bottom-4 -left-4 text-neon-cyan text-lg&quot;&gt;&lt;/i&gt;
+            &lt;/div&gt;
+            
+            &lt;span class=&quot;text-[10px] font-bold text-neon-purple bg-neon-purple/10 px-3 py-1 rounded-full border border-neon-purple/30 uppercase tracking-wider mb-2&quot;&gt;Badge Épico Desbloqueado&lt;/span&gt;
+            
+            &lt;h2 class=&quot;font-display text-2xl text-white mb-2&quot;&gt;Mestre dos Dragões&lt;/h2&gt;
+            &lt;p class=&quot;text-sm text-gray-400 mb-6&quot;&gt;Você demonstrou força e resiliência ao completar 5 missões difíceis em um único dia. Um verdadeiro guerreiro!&lt;/p&gt;
+            
+            &lt;div class=&quot;w-full bg-dark-surface rounded-xl p-4 border border-gray-700 mb-6 text-left&quot;&gt;
+                &lt;h4 class=&quot;text-xs font-bold text-white mb-3 uppercase&quot;&gt;Requisitos Atendidos:&lt;/h4&gt;
+                &lt;div class=&quot;flex flex-col gap-2&quot;&gt;
+                    &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+                        &lt;i class=&quot;fa-solid fa-circle-check text-neon-green text-sm&quot;&gt;&lt;/i&gt;
+                        &lt;span class=&quot;text-xs text-gray-300&quot;&gt;Missão Difícil 1 (Arrumar Quarto)&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+                        &lt;i class=&quot;fa-solid fa-circle-check text-neon-green text-sm&quot;&gt;&lt;/i&gt;
+                        &lt;span class=&quot;text-xs text-gray-300&quot;&gt;Missão Difícil 2 (Lição de Casa)&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+                        &lt;i class=&quot;fa-solid fa-circle-check text-neon-green text-sm&quot;&gt;&lt;/i&gt;
+                        &lt;span class=&quot;text-xs text-gray-300&quot;&gt;Missão Difícil 3 (Ajudar no Jantar)&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+                        &lt;i class=&quot;fa-solid fa-circle-check text-neon-green text-sm&quot;&gt;&lt;/i&gt;
+                        &lt;span class=&quot;text-xs text-gray-300&quot;&gt;Missão Difícil 4 (Ler 30 min)&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;flex items-center gap-2&quot;&gt;
+                        &lt;i class=&quot;fa-solid fa-circle-check text-neon-green text-sm&quot;&gt;&lt;/i&gt;
+                        &lt;span class=&quot;text-xs text-gray-300&quot;&gt;Missão Difícil 5 (Dormir no Horário)&lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;button class=&quot;w-full py-4 rounded-xl bg-neon-purple text-white font-display text-lg shadow-[0_0_15px_rgba(168,85,247,0.5)] btn-gaming flex items-center justify-center gap-2&quot;&gt;
+                &lt;i class=&quot;fa-solid fa-share-nodes&quot;&gt;&lt;/i&gt; Compartilhar Vitória
+            &lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;style&gt;
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    &lt;/style&gt;
+
+    &lt;script&gt;
+        function initializeCharts() {
+            try {
+                // XP Trend Chart
+                var trendData = [{
+                    x: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
+                    y: [120, 150, 100, 250, 300, 450, 500],
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    fill: 'tozeroy',
+                    line: {
+                        color: '#3b82f6',
+                        width: 3,
+                        shape: 'spline',
+                        smoothing: 1.3
+                    },
+                    marker: {
+                        color: '#a855f7',
+                        size: 8,
+                        line: {
+                            color: '#0b0e14',
+                            width: 2
+                        }
+                    },
+                    fillcolor: 'rgba(59, 130, 246, 0.2)',
+                    hoverinfo: 'y'
+                }];
+
+                var trendLayout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    margin: { t: 10, r: 10, b: 20, l: 30 },
+                    xaxis: {
+                        showgrid: false,
+                        zeroline: false,
+                        tickfont: { color: '#9ca3af', size: 10 }
+                    },
+                    yaxis: {
+                        showgrid: true,
+                        gridcolor: 'rgba(255,255,255,0.05)',
+                        zeroline: false,
+                        tickfont: { color: '#9ca3af', size: 10 }
+                    },
+                    showlegend: false,
+                    dragmode: false
+                };
+
+                Plotly.newPlot('xp-trend-chart', trendData, trendLayout, {displayModeBar: false, responsive: true});
+            } catch(e) {
+                console.error('Chart initialization failed:', e);
+            }
+        }
+
+        window.addEventListener('load', initializeCharts);
+        setTimeout(initializeCharts, 1200);
+    &lt;/script&gt;
+
+  &lt;script&gt;
+    (function() {
+      function blockEvent(e) {
+        if (!e) return false;
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        return false;
+      }
+
+      // Block all anchor navigations (including http(s), mailto, tel, hash, fragments)
+      document.addEventListener('click', function(e) {
+        var a = e.target &amp;&amp; e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        return blockEvent(e);
+      }, true);
+
+      // Neutralize programmatic navigation attempts
+      try { window.open = function() { return null }; } catch (_) {}
+      try {
+        var noop = function(){};
+        history.pushState = noop;
+        history.replaceState = noop;
+      } catch (_) {}
+      try {
+        if (window.location) {
+          window.location.assign = function(){};
+          window.location.replace = function(){};
+        }
+      } catch (_) {}
+    })();
+  &lt;/script&gt;
+&lt;script&gt;(function() {
+  function _uxpResizeCharts() {
+    if (window.Plotly) {
+      document.querySelectorAll('.plot-container.plotly').forEach(function(pc) {
+        var gd = pc.parentElement;
+        if (!gd) return;
+        var rect = gd.getBoundingClientRect();
+        if (rect.width &lt;= 0 || rect.height &lt;= 0) return;
+        try { window.Plotly.relayout(gd, { width: Math.round(rect.width), height: Math.round(rect.height) }); } catch(e) {}
+      });
+    }
+    if (window.ApexCharts &amp;&amp; window.Apex &amp;&amp; window.Apex._chartInstances) {
+      window.Apex._chartInstances.forEach(function(inst) {
+        try { (inst.chart || inst).updateOptions({}, false, false); } catch(e) {}
+      });
+    }
+    if (window.Chart) {
+      try { Object.values(window.Chart.instances || {}).forEach(function(c) { c.resize(); }); } catch(e) {}
+    }
+  }
+
+  window.addEventListener('load', function() {
+    setTimeout(function() { _uxpResizeCharts(); setTimeout(_uxpResizeCharts, 500); }, 300);
+    try {
+      var _lastW = 0, _lastH = 0, _timer = 0;
+      new ResizeObserver(function() {
+        var w = document.documentElement.clientWidth;
+        var h = document.documentElement.clientHeight;
+        if (w === _lastW &amp;&amp; h === _lastH) return;
+        _lastW = w; _lastH = h;
+        clearTimeout(_timer);
+        _timer = setTimeout(_uxpResizeCharts, 150);
+      }).observe(document.documentElement);
+    } catch(e) {}
+  });
+})();&lt;/script&gt;&lt;/body&gt;
+&lt;/html&gt;" frameborder="0" style="width: 375px; height: 840px; min-height: 630px; border: 2px solid rgb(209, 213, 219); border-radius: 0.5rem; display: block;"></iframe>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefito - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Fredoka One"', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
+                        },
+                        dark: {
+                            bg: '#0b0e14',
+                            surface: '#161b22',
+                            card: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(168,85,247,0.5)',
+                        'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
+                        'neon-green': '0 0 15px rgba(34,197,94,0.5)',
+                        'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
+                        'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
+                    },
+                    backgroundImage: {
+                        'radial-burst': 'radial-gradient(circle at center, #1e1b4b 0%, #0b0e14 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 30% 20%, #1a0a2e 0%, #0b0e14 50%, #020408 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Ambient background blobs */
+        .bg-blob-1 {
+            position: fixed; top: -10%; left: -10%;
+            width: 40vw; height: 40vw;
+            border-radius: 50%;
+            background: #a855f7;
+            opacity: 0.08;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        .bg-blob-2 {
+            position: fixed; bottom: -10%; right: -10%;
+            width: 50vw; height: 50vw;
+            border-radius: 50%;
+            background: #3b82f6;
+            opacity: 0.08;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+
+        /* ── PHONE SHELL ── */
+        .phone-shell {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: linear-gradient(160deg, #1c1c2e 0%, #0f0f1a 100%);
+            border-radius: 52px;
+            box-shadow:
+                0 0 0 2px #2a2a4a,
+                0 0 0 4px #111124,
+                0 0 0 6px #252540,
+                0 40px 80px rgba(0,0,0,0.8),
+                0 0 60px rgba(168,85,247,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* Side buttons */
+        .phone-shell::before {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 120px;
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(180deg, #2a2a4a, #1a1a2e);
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 70px 0 #2a2a4a, 0 140px 0 #2a2a4a;
+        }
+        .phone-shell::after {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 150px;
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(180deg, #2a2a4a, #1a1a2e);
+            border-radius: 3px 0 0 3px;
+            box-shadow: 0 55px 0 #2a2a4a;
+        }
+
+        /* Status bar */
+        .status-bar {
+            width: 100%;
+            height: 44px;
+            padding: 12px 28px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Dynamic island */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 34px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 20;
+        }
+
+        .status-time {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        /* Screen content area */
+        .phone-screen {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 8px 24px 24px;
+            scrollbar-width: none;
+        }
+        .phone-screen::-webkit-scrollbar { display: none; }
+
+        /* Home indicator */
+        .home-indicator {
+            width: 100%;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .home-indicator-bar {
+            width: 130px;
+            height: 5px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 10px;
+        }
+
+        /* App content styles */
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-gaming {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            height: 52px;
+            padding-left: 44px;
+            padding-right: 16px;
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .input-gaming::placeholder { color: #6b7280; }
+        .input-gaming:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 12px rgba(168,85,247,0.4), inset 0 0 8px rgba(168,85,247,0.15);
+            outline: none;
+        }
+
+        .input-gaming-green {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            height: 52px;
+            padding-left: 44px;
+            padding-right: 16px;
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .input-gaming-green::placeholder { color: #6b7280; text-transform: none; }
+        .input-gaming-green:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 12px rgba(34,197,94,0.4), inset 0 0 8px rgba(34,197,94,0.15);
+            outline: none;
+        }
+
+        .btn-gaming {
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+        }
+        .btn-gaming:active {
+            transform: translateY(3px);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4) !important;
+        }
+
+        .profile-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: grayscale(0.5) opacity(0.7);
+            cursor: pointer;
+        }
+        .profile-card.active {
+            filter: grayscale(0) opacity(1);
+            transform: scale(1.04);
+            border-color: var(--active-color) !important;
+            box-shadow: 0 0 20px var(--active-glow);
+        }
+
+        .toggle-track {
+            width: 40px; height: 22px;
+            background: #161b22;
+            border-radius: 999px;
+            border: 1px solid #4b5563;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .toggle-track.on { background: rgba(168,85,247,0.2); border-color: #a855f7; }
+        .toggle-thumb {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: #9ca3af;
+            transition: all 0.3s;
+            box-shadow: 0 0 6px rgba(168,85,247,0.5);
+        }
+        .toggle-track.on .toggle-thumb { transform: translateX(18px); background: #a855f7; }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient blobs -->
+    <div class="bg-blob-1"></div>
+    <div class="bg-blob-2"></div>
+
+    <!-- ── PHONE SHELL ── -->
+    <div class="phone-shell">
+
+        <!-- Dynamic Island -->
+        <div class="dynamic-island"></div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <div class="status-icons">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Scrollable Screen -->
+        <div class="phone-screen">
+
+            <!-- Logo -->
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:24px; margin-top:8px;">
+                <div style="position:relative; display:inline-block;">
+                    <h1 style="font-family:'Fredoka One',cursive; font-size:42px; background: linear-gradient(180deg,#fff 0%,#a855f7 50%,#3b82f6 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 10px rgba(168,85,247,0.7)); margin:0; line-height:1;">TAREFITO</h1>
+                    <div style="position:absolute; inset:-6px; background:rgba(168,85,247,0.15); filter:blur(14px); border-radius:50%; z-index:-1;"></div>
+                </div>
+                <p style="color:rgba(6,182,212,0.85); font-weight:800; letter-spacing:0.2em; font-size:11px; text-transform:uppercase; margin:6px 0 0;">Aventura Diária</p>
+            </div>
+
+            <!-- Profile Selection -->
+            <div style="margin-bottom:20px;">
+                <p style="text-align:center; color:#d1d5db; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.12em; margin:0 0 12px;">Escolha seu perfil</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+
+                    <!-- Adult -->
+                    <div class="profile-card glass-panel active"
+                         style="border-radius:20px; padding:14px 10px; display:flex; flex-direction:column; align-items:center; border:2px solid #a855f7; position:relative; overflow:hidden; --active-color:#a855f7; --active-glow:rgba(168,85,247,0.45);"
+                         onclick="selectProfile(this,'adult')">
+                        <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%; background:#0b0e14; border:1px solid #a855f7; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(168,85,247,0.5);">
+                            <i class="fa-solid fa-check check-icon" style="color:#a855f7; font-size:9px; opacity:1;"></i>
+                        </div>
+                        <div style="width:68px; height:68px; border-radius:50%; background:linear-gradient(135deg,#581c87,#3730a3); border:3px solid #0b0e14; box-shadow:0 0 14px rgba(168,85,247,0.6); margin-bottom:10px;"></div>
+                        <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Responsável</span>
+                        <span style="font-size:10px; color:#c084fc; font-weight:700; margin-top:2px;">Mestre das Missões</span>
+                    </div>
+
+                    <!-- Child -->
+                    <div class="profile-card glass-panel"
+                         style="border-radius:20px; padding:14px 10px; display:flex; flex-direction:column; align-items:center; border:2px solid transparent; position:relative; overflow:hidden; --active-color:#22c55e; --active-glow:rgba(34,197,94,0.45);"
+                         onclick="selectProfile(this,'child')">
+                        <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%; background:#0b0e14; border:1px solid #4b5563; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-check check-icon" style="color:#22c55e; font-size:9px; opacity:0;"></i>
+                        </div>
+                        <div style="width:68px; height:68px; border-radius:50%; background:linear-gradient(135deg,#14532d,#134e4a); border:3px solid #0b0e14; margin-bottom:10px;"></div>
+                        <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Criança</span>
+                        <span style="font-size:10px; color:#86efac; font-weight:700; margin-top:2px;">Herói/Heroína da Missão</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Login Form Card -->
+            <div id="login_credentials_form" class="glass-panel" style="border-radius:28px; padding:20px 18px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+
+                <!-- Decorative corners -->
+                <div style="position:absolute;top:0;left:0;width:24px;height:24px;border-top:2px solid #a855f7;border-left:2px solid #a855f7;border-radius:28px 0 0 0;opacity:0.5;"></div>
+                <div style="position:absolute;top:0;right:0;width:24px;height:24px;border-top:2px solid #a855f7;border-right:2px solid #a855f7;border-radius:0 28px 0 0;opacity:0.5;"></div>
+                <div style="position:absolute;bottom:0;left:0;width:24px;height:24px;border-bottom:2px solid #a855f7;border-left:2px solid #a855f7;border-radius:0 0 0 28px;opacity:0.5;"></div>
+                <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-bottom:2px solid #a855f7;border-right:2px solid #a855f7;border-radius:0 0 28px 0;opacity:0.5;"></div>
+
+                <h3 style="font-family:'Fredoka One',cursive; color:#fff; font-size:18px; margin:0 0 16px;">Acesso Seguro</h3>
+
+                <!-- Email (adult) -->
+                <div id="email-input-group" style="position:relative; margin-bottom:12px;">
+                    <div style="position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#a855f7; opacity:0.75; font-size:14px; pointer-events:none;">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                    </div>
+                    <input type="text" placeholder="Email ou Telefone" class="input-gaming" />
+                </div>
+
+                <!-- Password (adult) -->
+                <div id="password-input-group" style="position:relative; margin-bottom:12px;">
+                    <div style="position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#a855f7; opacity:0.75; font-size:14px; pointer-events:none;">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <input type="password" placeholder="Senha Mestra" class="input-gaming" style="padding-right:44px;" />
+                    <button type="button" onclick="togglePassword(this)" style="position:absolute; top:50%; right:14px; transform:translateY(-50%); background:none; border:none; color:#6b7280; cursor:pointer; font-size:14px;">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </button>
+                </div>
+
+                <!-- Code (child) -->
+                <div id="pin_entry_overlay" style="display:none; flex-direction:column; align-items:center; margin-bottom:12px;">
+                    <p style="color:#22c55e; font-size:12px; font-weight:700; margin:0 0 10px;">Digite seu Código Secreto</p>
+                    <div style="position:relative; width:100%;">
+                        <div style="position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#22c55e; opacity:0.75; font-size:14px; pointer-events:none;">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <input type="text" placeholder="Ex: ABC-1234" maxlength="8" class="input-gaming-green" />
+                    </div>
+                </div>
+
+                <!-- Toggle + Forgot -->
+                <div style="display:flex; align-items:center; justify-content:space-between; margin:8px 0 16px; padding:0 2px;">
+                    <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="toggleSwitch(this)">
+                        <div class="toggle-track on">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                        <span style="font-size:12px; color:#d1d5db; font-weight:700;">Lembrar nave</span>
+                    </div>
+                    <a href="#" style="font-size:12px; color:#3b82f6; font-weight:700; text-decoration:none; text-shadow:0 0 6px rgba(59,130,246,0.6);">Esqueci a chave</a>
+                </div>
+
+                <!-- CTA -->
+                <button type="button" id="cta-btn" class="btn-gaming" style="width:100%; height:52px; border-radius:14px; background:linear-gradient(90deg,#a855f7,#3b82f6); color:#fff; font-family:'Fredoka One',cursive; font-size:18px; letter-spacing:0.08em; box-shadow:0 0 20px rgba(168,85,247,0.55), inset 0 2px 0 rgba(255,255,255,0.25); border-bottom:4px solid #581c87; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    INICIAR MISSÃO <i class="fa-solid fa-rocket" style="font-size:14px;"></i>
+                </button>
+
+                <p style="text-align:center; margin:14px 0 0; font-size:12px; color:#9ca3af;">
+                    Novo explorador?
+                    <a href="#" style="color:#ec4899; font-weight:700; text-decoration:none; text-shadow:0 0 6px rgba(236,72,153,0.6); margin-left:4px;">Criar Base</a>
+                </p>
+            </div>
+
+        </div><!-- /phone-screen -->
+
+        <!-- Home indicator -->
+        <div class="home-indicator">
+            <div class="home-indicator-bar"></div>
+        </div>
+
+    </div><!-- /phone-shell -->
+
+    <script>
+        function selectProfile(element, type) {
+            document.querySelectorAll('.profile-card').forEach(card => {
+                card.classList.remove('active');
+                card.style.borderColor = 'transparent';
+                const ci = card.querySelector('.check-icon');
+                ci.style.opacity = '0';
+                ci.parentElement.style.borderColor = '#4b5563';
+                ci.parentElement.style.boxShadow = 'none';
+            });
+
+            element.classList.add('active');
+
+            const checkIcon = element.querySelector('.check-icon');
+            checkIcon.style.opacity = '1';
+
+            const emailGroup   = document.getElementById('email-input-group');
+            const passwordGroup = document.getElementById('password-input-group');
+            const pinGroup     = document.getElementById('pin_entry_overlay');
+            const form         = document.getElementById('login_credentials_form');
+            const ctaBtn       = document.getElementById('cta-btn');
+
+            // reset corner accents
+            form.querySelectorAll('[style*="border-top:2px"],[style*="border-bottom:2px"]').forEach(el => {
+                el.style.borderColor = type === 'adult' ? '#a855f7' : '#22c55e';
+            });
+
+            if (type === 'adult') {
+                element.style.borderColor = '#a855f7';
+                checkIcon.parentElement.style.borderColor = '#a855f7';
+                checkIcon.parentElement.style.boxShadow = '0 0 8px rgba(168,85,247,0.5)';
+
+                emailGroup.style.display = 'block';
+                passwordGroup.style.display = 'block';
+                pinGroup.style.display = 'none';
+
+                form.style.boxShadow = '0 8px 32px rgba(0,0,0,0.5)';
+                ctaBtn.style.background = 'linear-gradient(90deg,#a855f7,#3b82f6)';
+                ctaBtn.style.boxShadow = '0 0 20px rgba(168,85,247,0.55), inset 0 2px 0 rgba(255,255,255,0.25)';
+                ctaBtn.style.borderBottomColor = '#581c87';
+            } else {
+                element.style.borderColor = '#22c55e';
+                checkIcon.parentElement.style.borderColor = '#22c55e';
+                checkIcon.parentElement.style.boxShadow = '0 0 8px rgba(34,197,94,0.5)';
+
+                emailGroup.style.display = 'none';
+                passwordGroup.style.display = 'none';
+                pinGroup.style.display = 'flex';
+
+                form.style.boxShadow = '0 8px 32px rgba(34,197,94,0.1)';
+                ctaBtn.style.background = 'linear-gradient(90deg,#22c55e,#14b8a6)';
+                ctaBtn.style.boxShadow = '0 0 20px rgba(34,197,94,0.55), inset 0 2px 0 rgba(255,255,255,0.25)';
+                ctaBtn.style.borderBottomColor = '#14532d';
+            }
+        }
+
+        function togglePassword(btn) {
+            const input = btn.previousElementSibling;
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            }
+        }
+
+        function toggleSwitch(wrapper) {
+            const track = wrapper.querySelector('.toggle-track');
+            track.classList.toggle('on');
+        }
+    </script>
+</body>
+</html>
