@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tarefito - Loja de Recompensas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Fredoka One"', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
+                        },
+                        dark: {
+                            bg: '#0b0e14',
+                            surface: '#161b22',
+                            card: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(168,85,247,0.5)',
+                        'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
+                        'neon-green': '0 0 15px rgba(34,197,94,0.5)',
+                        'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
+                        'neon-cyan': '0 0 15px rgba(6,182,212,0.5)',
+                        'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
+                        'btn-press': 'inset 0 4px 6px rgba(0,0,0,0.3)'
+                    },
+                    backgroundImage: {
+                        'radial-burst': 'radial-gradient(circle at center, #1e1b4b 0%, #0b0e14 100%)',
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0e14;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-gaming {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .input-gaming:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5), inset 0 0 10px rgba(168,85,247,0.2);
+            outline: none;
+        }
+
+        .btn-gaming {
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-gaming:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4) !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            display: none; /* Hide for mobile focus */
+        }
+        
+        /* Particle animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Toggle Switch Gaming */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22c55e;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: rgba(34,197,94,0.2);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            background-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.8);
+        }
+        
+        .toggle-label {
+            width: 48px;
+            height: 24px;
+            background-color: #161b22;
+            border: 2px solid #4b5563;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        /* Custom Radio/Checkbox gaming style */
+        .radio-gaming:checked + div {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5);
+            background-color: rgba(168,85,247,0.1);
+        }
+        .radio-gaming:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .progress-bar-animated {
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .chat-bubble-user {
+            border-radius: 20px 20px 0 20px;
+        }
+        .chat-bubble-bot {
+            border-radius: 20px 20px 20px 0;
+        }
+    </style>
+</head>
+<body class="min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-purple opacity-10 blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-blue opacity-10 blur-[120px]"></div>
+        <div class="absolute top-[40%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-neon-cyan opacity-5 blur-[80px]"></div>
+    </div>
+
+    <!-- Main Container - Mobile First (375x840 target) -->
+    <main class="w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 pb-24">
+        
+        <!-- Top Navigation / Header -->
+        <header id="app-header" class="w-full flex items-center justify-between px-6 py-5 sticky top-0 bg-dark-bg/80 backdrop-blur-md z-50 border-b border-gray-800">
+            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple">
+                Loja
+            </h1>
+            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors relative">
+                <i class="fa-solid fa-bell"></i>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-neon-pink rounded-full border-2 border-dark-surface"></div>
+            </button>
+        </header>
+
+        <div class="px-5 py-6 flex flex-col gap-6 flex-1 overflow-y-auto">
+
+            <!-- Star Balance Header -->
+            <section id="star-balance" class="flex flex-col gap-4">
+                <div class="glass-panel rounded-[24px] p-6 border-2 border-neon-purple/50 relative overflow-hidden flex items-center justify-between shadow-[0_0_30px_rgba(168,85,247,0.15)] group">
+                    <div class="absolute top-0 left-0 w-32 h-32 bg-neon-purple opacity-20 blur-[40px] rounded-full pointer-events-none"></div>
+                    
+                    <div class="flex flex-col z-10">
+                        <span class="text-sm font-bold text-gray-400 uppercase tracking-wider">Seu Saldo</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="font-display text-4xl text-white">450</span>
+                            <i class="fa-solid fa-star text-yellow-400 text-3xl shadow-[0_0_15px_rgba(250,204,21,0.5)] rounded-full"></i>
+                        </div>
+                    </div>
+                    
+                    <button class="w-12 h-12 rounded-2xl bg-dark-surface border-2 border-neon-cyan/50 flex items-center justify-center shadow-neon-cyan relative hover:bg-neon-cyan/20 transition-colors z-10">
+                        <i class="fa-solid fa-plus text-neon-cyan text-xl"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Search and Filter Bar -->
+            <section id="search-filter" class="flex flex-col gap-4">
+                <div class="flex gap-3">
+                    <div class="flex-1 relative">
+                        <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" placeholder="Buscar recompensas..." class="w-full h-12 bg-dark-surface border border-gray-700 rounded-xl pl-12 pr-4 text-sm text-white focus:border-neon-purple focus:outline-none transition-colors">
+                    </div>
+                    <button class="w-12 h-12 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
+                        <i class="fa-solid fa-sliders"></i>
+                    </button>
+                </div>
+                
+                <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                    <button class="shrink-0 px-4 py-2 rounded-xl bg-neon-purple/20 border border-neon-purple/50 text-neon-purple text-xs font-bold uppercase tracking-wider">
+                        Todos
+                    </button>
+                    <button class="shrink-0 px-4 py-2 rounded-xl bg-dark-surface border border-gray-700 text-gray-400 text-xs font-bold uppercase tracking-wider hover:border-neon-green hover:text-neon-green transition-colors">
+                        Comum
+                    </button>
+                    <button class="shrink-0 px-4 py-2 rounded-xl bg-dark-surface border border-gray-700 text-gray-400 text-xs font-bold uppercase tracking-wider hover:border-neon-purple hover:text-neon-purple transition-colors">
+                        Épico
+                    </button>
+                    <button class="shrink-0 px-4 py-2 rounded-xl bg-dark-surface border border-gray-700 text-gray-400 text-xs font-bold uppercase tracking-wider hover:border-neon-cyan hover:text-neon-cyan transition-colors">
+                        Lendário
+                    </button>
+                </div>
+            </section>
+
+            <!-- Reward Catalog Grid -->
+            <section id="reward-catalog" class="flex flex-col gap-4">
+                <div class="flex justify-between items-end">
+                    <h2 class="font-display text-xl text-white">Destaques</h2>
+                    <a href="#" class="text-xs font-bold text-neon-cyan hover:underline">Ver Todos</a>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Card 1: Common -->
+                    <div class="glass-panel rounded-[20px] p-3 border border-neon-green/30 flex flex-col gap-3 relative overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-green opacity-10 blur-[20px] rounded-full pointer-events-none"></div>
+                        
+                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
+                            <img class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/cf5f719deb-5223cba5e849847c92ef.png" alt="3D illustration of a colorful game controller, vibrant, neon accents, dark background" />
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] font-bold text-neon-green uppercase tracking-wider">Comum</span>
+                            <h3 class="font-display text-sm text-white truncate">1h de Videogame</h3>
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
+                                <span class="font-display text-sm text-yellow-400">50</span>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full py-2 rounded-lg bg-dark-surface border border-neon-green/50 text-[10px] font-bold text-neon-green uppercase hover:bg-neon-green/20 transition-colors">
+                            Resgatar
+                        </button>
+                    </div>
+
+                    <!-- Card 2: Epic -->
+                    <div class="glass-panel rounded-[20px] p-3 border border-neon-purple/50 flex flex-col gap-3 relative overflow-hidden group shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-purple opacity-20 blur-[20px] rounded-full pointer-events-none"></div>
+                        
+                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
+                            <img class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/250a6aa5bd-b26aac186e11ae93ada0.png" alt="3D illustration of a movie ticket and popcorn, vibrant, neon purple accents, dark background" />
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] font-bold text-neon-purple uppercase tracking-wider">Épico</span>
+                            <h3 class="font-display text-sm text-white truncate">Noite de Cinema</h3>
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
+                                <span class="font-display text-sm text-yellow-400">150</span>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full py-2 rounded-lg bg-neon-purple text-[10px] font-bold text-white uppercase shadow-neon-purple hover:bg-purple-500 transition-colors">
+                            Resgatar
+                        </button>
+                    </div>
+                    
+                    <!-- Card 3: Legendary -->
+                    <div class="glass-panel rounded-[20px] p-3 border border-neon-cyan/50 flex flex-col gap-3 relative overflow-hidden group shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-cyan opacity-20 blur-[20px] rounded-full pointer-events-none"></div>
+                        
+                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
+                            <img class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/08c1fa7347-93b9951fca916015805d.png" alt="3D illustration of a new toy or action figure box, glowing cyan accents, dark background" />
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] font-bold text-neon-cyan uppercase tracking-wider">Lendário</span>
+                            <h3 class="font-display text-sm text-white truncate">Brinquedo Novo</h3>
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
+                                <span class="font-display text-sm text-yellow-400">500</span>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full py-2 rounded-lg bg-dark-surface border border-gray-600 text-[10px] font-bold text-gray-400 uppercase cursor-not-allowed flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-lock text-xs"></i> Bloqueado
+                        </button>
+                    </div>
+
+                    <!-- Card 4: Common -->
+                    <div class="glass-panel rounded-[20px] p-3 border border-neon-green/30 flex flex-col gap-3 relative overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-green opacity-10 blur-[20px] rounded-full pointer-events-none"></div>
+                        
+                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
+                            <img class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/2196a1076e-f65b42e48be2aa93e525.png" alt="3D illustration of a delicious ice cream cone, vibrant colors, dark background" />
+                            <!-- Pending Approval Badge -->
+                            <div class="absolute top-2 right-2 w-6 h-6 rounded-full bg-dark-surface border border-yellow-400 flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-yellow-400 text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] font-bold text-neon-green uppercase tracking-wider">Comum</span>
+                            <h3 class="font-display text-sm text-white truncate">Sorvete</h3>
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
+                                <span class="font-display text-sm text-yellow-400">30</span>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full py-2 rounded-lg bg-dark-surface border border-yellow-400/50 text-[10px] font-bold text-yellow-400 uppercase cursor-not-allowed">
+                            Pendente
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity / Status -->
+            <section id="recent-activity" class="flex flex-col gap-4 mt-2">
+                <h2 class="font-display text-xl text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-neon-blue"></i> Atividade Recente
+                </h2>
+                
+                <div class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col gap-3">
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-dark-surface border border-gray-700">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-neon-green/20 border border-neon-green flex items-center justify-center">
+                                <i class="fa-solid fa-check text-neon-green text-sm"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-white">1h de Videogame</span>
+                                <span class="text-[10px] text-gray-400">Aprovado por Mamãe</span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400">Ontem</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-dark-surface border border-yellow-400/30">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-yellow-400/20 border border-yellow-400 flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-yellow-400 text-sm"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-white">Sorvete</span>
+                                <span class="text-[10px] text-yellow-400">Aguardando aprovação</span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400">Hoje</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Redemption Modal (Hidden by default, shown for demonstration) -->
+        <div id="redemption-modal" class="fixed inset-0 bg-dark-bg/90 backdrop-blur-sm z-[100] flex items-center justify-center px-5 hidden">
+            <div class="glass-panel w-full max-w-sm rounded-[24px] p-6 border-2 border-neon-purple/50 relative overflow-hidden flex flex-col items-center gap-4 shadow-[0_0_40px_rgba(168,85,247,0.2)]">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-neon-purple opacity-20 blur-[40px] rounded-full pointer-events-none"></div>
+                
+                <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-dark-surface border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <div class="w-20 h-20 rounded-2xl bg-dark-bg border-2 border-neon-purple/50 flex items-center justify-center shadow-neon-purple relative mb-2">
+                    <i class="fa-solid fa-ticket text-neon-purple text-3xl animate-pulse-glow"></i>
+                </div>
+
+                <h2 class="font-display text-2xl text-white text-center">Confirmar Resgate</h2>
+                
+                <p class="text-sm text-gray-300 text-center px-4">
+                    Você está prestes a resgatar <strong>"Noite de Cinema"</strong>.
+                </p>
+                
+                <div class="flex items-center gap-3 bg-dark-bg/80 px-5 py-3 rounded-xl border border-yellow-400/30 w-full justify-center">
+                    <span class="text-sm font-bold text-gray-400 uppercase">Custo:</span>
+                    <div class="flex items-center gap-1">
+                        <span class="font-display text-2xl text-yellow-400">-150</span>
+                        <i class="fa-solid fa-star text-yellow-400 text-xl shadow-[0_0_15px_rgba(250,204,21,0.5)] rounded-full"></i>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 w-full mt-4">
+                    <button class="btn-gaming flex-1 py-3 rounded-xl bg-dark-surface border border-gray-600 text-xs font-bold text-white uppercase hover:bg-gray-800">Cancelar</button>
+                    <button class="btn-gaming flex-1 py-3 rounded-xl bg-neon-purple text-xs font-bold text-white uppercase shadow-neon-purple hover:bg-purple-500">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Bar (Copied 1:1 from context, updated Active state) -->
+        <nav class="fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50">
+            <div class="max-w-[430px] mx-auto flex justify-around items-center h-20 px-2">
+                <!-- Painel / Dashboard Criança (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-gamepad text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Dashboard</span>
+                </a>
+                
+                <!-- Missões (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-list-check text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Missões</span>
+                </a>
+                
+                <!-- Perfil/Progresso (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-user-astronaut text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Perfil</span>
+                </a>
+                
+                <!-- Recompensas/Loja (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
+                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-gift text-neon-purple text-xl"></i>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-neon-purple mt-8">Loja</span>
+                </a>
+                
+            </div>
+        </nav>
+
+    </main>
+
+    <style>
+        .animate-spin-slow {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+
+  <script>
+    // nav liberada
+  </script>
+    <script src="tarefito-supabase.js"></script>
+    <script src="tarefito-nav.js"></script>
+</body>
+</html>

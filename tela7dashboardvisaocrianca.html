@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tarefito - Dashboard da Criança</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Fredoka One"', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
+                        },
+                        dark: {
+                            bg: '#0b0e14',
+                            surface: '#161b22',
+                            card: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(168,85,247,0.5)',
+                        'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
+                        'neon-green': '0 0 15px rgba(34,197,94,0.5)',
+                        'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
+                        'neon-cyan': '0 0 15px rgba(6,182,212,0.5)',
+                        'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
+                        'btn-press': 'inset 0 4px 6px rgba(0,0,0,0.3)'
+                    },
+                    backgroundImage: {
+                        'radial-burst': 'radial-gradient(circle at center, #1e1b4b 0%, #0b0e14 100%)',
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0e14;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-gaming {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .input-gaming:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5), inset 0 0 10px rgba(168,85,247,0.2);
+            outline: none;
+        }
+
+        .btn-gaming {
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-gaming:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4) !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            display: none; /* Hide for mobile focus */
+        }
+        
+        /* Particle animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Toggle Switch Gaming */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22c55e;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: rgba(34,197,94,0.2);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            background-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.8);
+        }
+        
+        .toggle-label {
+            width: 48px;
+            height: 24px;
+            background-color: #161b22;
+            border: 2px solid #4b5563;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        /* Custom Radio/Checkbox gaming style */
+        .radio-gaming:checked + div {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5);
+            background-color: rgba(168,85,247,0.1);
+        }
+        .radio-gaming:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .progress-bar-animated {
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body class="min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-purple opacity-10 blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-blue opacity-10 blur-[120px]"></div>
+        <div class="absolute top-[40%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-neon-cyan opacity-5 blur-[80px]"></div>
+    </div>
+
+    <!-- Main Container - Mobile First (375x840 target) -->
+    <main class="w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 pb-24">
+        
+        <!-- Top Navigation / Header -->
+        <header id="app-header" class="w-full flex items-center justify-between px-6 py-5 sticky top-0 bg-dark-bg/80 backdrop-blur-md z-50 border-b border-gray-800">
+            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
+                <i class="fa-solid fa-bell"></i>
+                <div class="absolute top-2 right-2 w-2 h-2 bg-neon-pink rounded-full shadow-neon-pink"></div>
+            </button>
+            <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple">
+                Leo's Space
+            </h1>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-900 to-indigo-900 border-2 border-neon-cyan shadow-neon-cyan overflow-hidden flex items-center justify-center cursor-pointer">
+                 <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Child Avatar" />
+            </div>
+        </header>
+
+        <div class="px-5 py-6 flex flex-col gap-6 flex-1 overflow-y-auto">
+
+            <!-- Hero Stat Header: Star Balance & XP -->
+            <section id="hero-stats" class="flex flex-col gap-4">
+                <div class="glass-panel rounded-[24px] p-6 border-2 border-neon-purple/50 relative overflow-hidden flex flex-col items-center justify-center gap-4 shadow-[0_0_30px_rgba(168,85,247,0.15)]">
+                    <!-- Decorative Background Elements -->
+                    <div class="absolute top-0 left-0 w-32 h-32 bg-neon-purple opacity-20 blur-[40px] rounded-full pointer-events-none"></div>
+                    <div class="absolute bottom-0 right-0 w-32 h-32 bg-neon-blue opacity-20 blur-[40px] rounded-full pointer-events-none"></div>
+                    
+                    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Saldo de Estrelas</h2>
+                    
+                    <div class="flex items-center gap-3 animate-pulse-glow">
+                        <i class="fa-solid fa-star text-yellow-400 text-4xl shadow-[0_0_15px_rgba(250,204,21,0.5)] rounded-full"></i>
+                        <span class="font-display text-5xl text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">345</span>
+                    </div>
+
+                </div>
+
+                <!-- Quick Action Hub -->
+                <div class="mt-1">
+                    <button class="btn-gaming w-full glass-panel rounded-[20px] p-4 border border-yellow-400/40 flex items-center justify-center gap-3 shadow-[0_0_15px_rgba(250,204,21,0.1)] hover:border-yellow-400 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-dark-bg border border-yellow-400/50 flex items-center justify-center">
+                            <i class="fa-solid fa-store text-yellow-400"></i>
+                        </div>
+                        <div class="flex flex-col items-start">
+                            <span class="font-display text-sm text-white">Ir à</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Loja</span>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Active Missions Carousel -->
+            <section id="active-missions" class="flex flex-col gap-3 mt-2">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-display text-lg text-white flex items-center gap-2">
+                        <i class="fa-solid fa-rocket text-neon-pink"></i> Missões de Hoje
+                    </h3>
+                    <a href="#" class="text-xs font-bold text-neon-cyan hover:text-white transition-colors">Ver Todas</a>
+                </div>
+
+                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-5 px-5 snap-x">
+                    
+                    <!-- Mission Card 1 -->
+                    <div class="snap-center shrink-0 w-[240px] glass-panel rounded-[24px] p-4 border border-neon-blue/40 flex flex-col gap-3 relative overflow-hidden group shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-neon-blue opacity-10 blur-[20px] rounded-full"></div>
+                        
+                        <div class="flex justify-between items-start">
+                            <div class="w-12 h-12 rounded-xl bg-dark-bg border border-neon-blue/50 flex items-center justify-center shadow-neon-blue relative">
+                                <i class="fa-solid fa-book text-neon-blue text-lg"></i>
+                            </div>
+                            <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
+                                <span class="text-xs font-display text-yellow-400">+20</span>
+                                <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col">
+                            <span class="font-display text-base text-white">Ler 15 páginas</span>
+                            <span class="text-[10px] font-bold text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Até 18:00</span>
+                        </div>
+                        
+                        <div class="mt-2 flex items-center justify-between">
+                            <span class="px-2 py-1 rounded-md bg-neon-purple/20 border border-neon-purple/50 text-[10px] font-bold text-neon-purple uppercase">Nova</span>
+                            <button class="btn-gaming px-4 py-2 rounded-xl bg-gradient-to-r from-neon-blue to-cyan-600 text-white font-display text-xs shadow-neon-blue border-b-2 border-blue-900 hover:scale-105 transition-transform">
+                                Iniciar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mission Card 2 -->
+                    <div class="snap-center shrink-0 w-[240px] glass-panel rounded-[24px] p-4 border border-neon-green/40 flex flex-col gap-3 relative overflow-hidden group shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-neon-green opacity-10 blur-[20px] rounded-full"></div>
+                        
+                        <div class="flex justify-between items-start">
+                            <div class="w-12 h-12 rounded-xl bg-dark-bg border border-neon-green/50 flex items-center justify-center shadow-neon-green relative">
+                                <i class="fa-solid fa-broom text-neon-green text-lg"></i>
+                            </div>
+                            <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
+                                <span class="text-xs font-display text-yellow-400">+15</span>
+                                <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col">
+                            <span class="font-display text-base text-white">Arrumar a Cama</span>
+                            <span class="text-[10px] font-bold text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Até 10:00</span>
+                        </div>
+                        
+                        <div class="mt-2 flex items-center justify-between">
+                             <span class="px-2 py-1 rounded-md bg-neon-purple/20 border border-neon-purple/50 text-[10px] font-bold text-neon-purple uppercase">Nova</span>
+                            <button class="btn-gaming px-4 py-2 rounded-xl bg-gradient-to-r from-neon-green to-emerald-600 text-white font-display text-xs shadow-neon-green border-b-2 border-green-900 hover:scale-105 transition-transform">
+                                Iniciar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Missions In Progress -->
+            <section id="missions-in-progress" class="flex flex-col gap-3">
+                <h3 class="font-display text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-spinner text-neon-cyan animate-spin-slow"></i> Em Andamento
+                </h3>
+
+                <div class="glass-panel rounded-[20px] p-4 border border-neon-purple/30 flex flex-col gap-3 relative overflow-hidden">
+                     <div class="absolute left-0 top-0 w-1 h-full bg-neon-purple shadow-neon-purple"></div>
+                     
+                     <div class="flex items-center justify-between">
+                         <div class="flex items-center gap-3">
+                             <div class="w-10 h-10 rounded-full bg-dark-bg border border-neon-purple/50 flex items-center justify-center">
+                                 <i class="fa-solid fa-dog text-neon-purple"></i>
+                             </div>
+                             <div class="flex flex-col">
+                                 <span class="font-display text-sm text-white">Passear com o Rex</span>
+                                 <span class="text-[10px] font-bold text-neon-purple uppercase mt-0.5">Em Progresso</span>
+                             </div>
+                         </div>
+                         <div class="flex items-center gap-1">
+                            <span class="text-xs font-display text-yellow-400">30</span>
+                            <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                        </div>
+                     </div>
+
+                     <div class="flex gap-2 mt-1">
+                         <button class="btn-gaming flex-1 h-10 rounded-xl bg-dark-surface border border-gray-600 text-xs font-bold text-white flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
+                             <i class="fa-solid fa-xmark text-neon-pink"></i> Cancelar
+                         </button>
+                         <button class="btn-gaming flex-1 h-10 rounded-xl bg-neon-purple/20 border border-neon-purple text-xs font-bold text-white flex items-center justify-center gap-2 hover:bg-neon-purple/30 transition-colors shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                             <i class="fa-solid fa-check text-neon-purple"></i> Finalizar
+                         </button>
+                     </div>
+                </div>
+            </section>
+
+
+        </div>
+
+        <!-- Bottom Navigation Bar (Copied 1:1 from context, updated Active state) -->
+        <nav class="fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50">
+            <div class="max-w-[430px] mx-auto flex justify-around items-center h-20 px-2">
+                <!-- Painel / Dashboard Criança (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
+                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-gamepad text-neon-purple text-xl"></i>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-neon-purple mt-8">Dashboard</span>
+                </a>
+                
+                <!-- Missões (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-list-check text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Missões</span>
+                </a>
+                
+                <!-- Perfil/Progresso (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-user-astronaut text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Perfil</span>
+                </a>
+                
+                <!-- Recompensas/Loja (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-gift text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Loja</span>
+                </a>
+                
+            </div>
+        </nav>
+
+    </main>
+
+    <style>
+        .animate-spin-slow {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+  <script>
+    // nav liberada
+  </script>
+    <script src="tarefito-supabase.js"></script>
+    <script src="tarefito-nav.js"></script>
+</body>
+</html>

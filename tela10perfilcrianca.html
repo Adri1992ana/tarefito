@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tarefito - Perfil e Progresso da Criança</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Fredoka One"', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
+                        },
+                        dark: {
+                            bg: '#0b0e14',
+                            surface: '#161b22',
+                            card: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(168,85,247,0.5)',
+                        'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
+                        'neon-green': '0 0 15px rgba(34,197,94,0.5)',
+                        'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
+                        'neon-cyan': '0 0 15px rgba(6,182,212,0.5)',
+                        'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
+                        'btn-press': 'inset 0 4px 6px rgba(0,0,0,0.3)'
+                    },
+                    backgroundImage: {
+                        'radial-burst': 'radial-gradient(circle at center, #1e1b4b 0%, #0b0e14 100%)',
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0e14;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-gaming {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .input-gaming:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5), inset 0 0 10px rgba(168,85,247,0.2);
+            outline: none;
+        }
+
+        .btn-gaming {
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-gaming:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4) !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            display: none; /* Hide for mobile focus */
+        }
+        
+        /* Particle animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Toggle Switch Gaming */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22c55e;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: rgba(34,197,94,0.2);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            background-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.8);
+        }
+        
+        .toggle-label {
+            width: 48px;
+            height: 24px;
+            background-color: #161b22;
+            border: 2px solid #4b5563;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        /* Custom Radio/Checkbox gaming style */
+        .radio-gaming:checked + div {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5);
+            background-color: rgba(168,85,247,0.1);
+        }
+        .radio-gaming:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .progress-bar-animated {
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .chat-bubble-user {
+            border-radius: 20px 20px 0 20px;
+        }
+        .chat-bubble-bot {
+            border-radius: 20px 20px 20px 0;
+        }
+        
+        .heatmap-cell {
+            transition: all 0.2s ease;
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-purple opacity-10 blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-blue opacity-10 blur-[120px]"></div>
+        <div class="absolute top-[40%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-neon-cyan opacity-5 blur-[80px]"></div>
+    </div>
+
+    <!-- Main Container - Mobile First (375x840 target) -->
+    <main class="w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 pb-24">
+        
+        <!-- Top Navigation / Header -->
+        <header id="app-header" class="w-full flex items-center justify-between px-6 py-5 sticky top-0 bg-dark-bg/80 backdrop-blur-md z-50 border-b border-gray-800">
+            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple">
+                Perfil
+            </h1>
+            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors relative">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </header>
+
+        <div class="px-5 py-6 flex flex-col gap-6 flex-1 overflow-y-auto">
+
+            <!-- Profile Hero Section -->
+            <section id="profile-hero" class="flex flex-col items-center gap-4">
+                <div class="relative">
+                    <div class="w-28 h-28 rounded-full bg-dark-surface border-4 border-neon-purple shadow-neon-purple flex items-center justify-center overflow-hidden relative z-10">
+                        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/1adba5cff0-22b7ecee7dd45b17e285.png" alt="A cool 3D avatar of a kid astronaut with neon purple accents, dark background, gamer style" />
+                    </div>
+                    <!-- Level Badge -->
+                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-neon-purple text-white px-3 py-1 rounded-full text-xs font-bold border-2 border-dark-bg shadow-[0_0_10px_rgba(168,85,247,0.8)] z-20 whitespace-nowrap">
+                        Nvl. 12
+                    </div>
+                </div>
+                
+                <div class="text-center flex flex-col items-center">
+                    <h2 class="font-display text-2xl text-white flex items-center gap-2">
+                        LeoNinja <i class="fa-solid fa-pen text-neon-cyan text-sm cursor-pointer hover:text-white transition-colors"></i>
+                    </h2>
+                </div>
+            </section>
+
+
+            <!-- Stats Grid -->
+            <section id="stats-grid" class="flex flex-col gap-4">
+                <h3 class="font-display text-lg text-white">Estatísticas</h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Missions Completed -->
+                    <div class="glass-panel rounded-[20px] p-4 border border-neon-green/30 flex flex-col gap-2 relative overflow-hidden">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-neon-green opacity-10 blur-[15px] rounded-full pointer-events-none"></div>
+                        <div class="w-8 h-8 rounded-full bg-neon-green/20 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-check-double text-neon-green text-sm"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Missões</span>
+                        <span class="font-display text-2xl text-white">142</span>
+                    </div>
+                    
+                    <!-- Approval Rate -->
+                    <div class="glass-panel rounded-[20px] p-4 border border-neon-blue/30 flex flex-col gap-2 relative overflow-hidden">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-neon-blue opacity-10 blur-[15px] rounded-full pointer-events-none"></div>
+                        <div class="w-8 h-8 rounded-full bg-neon-blue/20 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-percent text-neon-blue text-sm"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aprovação</span>
+                        <span class="font-display text-2xl text-white">94%</span>
+                    </div>
+
+                    <!-- Stars Earned -->
+                    <div class="glass-panel rounded-[20px] p-4 border border-yellow-400/30 flex flex-col gap-2 relative overflow-hidden">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-yellow-400 opacity-10 blur-[15px] rounded-full pointer-events-none"></div>
+                        <div class="w-8 h-8 rounded-full bg-yellow-400/20 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Ganhas</span>
+                        <span class="font-display text-2xl text-white">3.2k</span>
+                    </div>
+                    
+                    <!-- Stars Spent -->
+                    <div class="glass-panel rounded-[20px] p-4 border border-neon-pink/30 flex flex-col gap-2 relative overflow-hidden">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-neon-pink opacity-10 blur-[15px] rounded-full pointer-events-none"></div>
+                        <div class="w-8 h-8 rounded-full bg-neon-pink/20 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-fire text-neon-pink text-sm"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Gastas</span>
+                        <span class="font-display text-2xl text-white">2.8k</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Achievements Scroller -->
+            <section id="recent-achievements" class="flex flex-col gap-3 mt-2">
+                <h3 class="font-display text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-yellow-400"></i> Conquistas Recentes
+                </h3>
+
+                <div class="flex gap-3 overflow-x-auto py-4 scrollbar-hide -mx-5 px-5">
+
+                    <div class="shrink-0 flex flex-col items-center gap-2">
+                        <div class="w-16 h-16 rounded-[20px] bg-dark-surface border-2 border-yellow-400 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.3)] rotate-45 overflow-hidden">
+                            <div class="-rotate-45 flex items-center justify-center w-full h-full bg-gradient-to-br from-yellow-900/40 to-transparent">
+                                <i class="fa-solid fa-fire text-yellow-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-300 text-center w-16 leading-tight">7 Dias Seguidos</span>
+                    </div>
+
+                    <div class="shrink-0 flex flex-col items-center gap-2">
+                        <div class="w-16 h-16 rounded-[20px] bg-dark-surface border-2 border-neon-blue flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.3)] rotate-45 overflow-hidden">
+                            <div class="-rotate-45 flex items-center justify-center w-full h-full bg-gradient-to-br from-blue-900/40 to-transparent">
+                                <i class="fa-solid fa-book-open text-neon-blue text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-300 text-center w-16 leading-tight">Leitor Mestre</span>
+                    </div>
+
+                    <div class="shrink-0 flex flex-col items-center gap-2">
+                        <div class="w-16 h-16 rounded-[20px] bg-dark-surface border-2 border-gray-600 flex items-center justify-center opacity-50 rotate-45 overflow-hidden">
+                            <div class="-rotate-45 flex items-center justify-center w-full h-full">
+                                <i class="fa-solid fa-lock text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-500 text-center w-16 leading-tight">Nível 15</span>
+                    </div>
+
+                    <div class="shrink-0 flex flex-col items-center gap-2">
+                        <div class="w-16 h-16 rounded-[20px] bg-dark-surface border-2 border-gray-600 flex items-center justify-center opacity-50 rotate-45 overflow-hidden">
+                            <div class="-rotate-45 flex items-center justify-center w-full h-full">
+                                <i class="fa-solid fa-lock text-gray-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-500 text-center w-16 leading-tight">Ajudante Ouro</span>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Bottom Navigation Bar (Copied 1:1 from context, updated Active state) -->
+        <nav class="fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50">
+            <div class="max-w-[430px] mx-auto flex justify-around items-center h-20 px-2">
+                <!-- Painel / Dashboard Criança (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-gamepad text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Dashboard</span>
+                </a>
+                
+                <!-- Missões (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-list-check text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Missões</span>
+                </a>
+                
+                <!-- Perfil/Progresso (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
+                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-user-astronaut text-neon-purple text-xl"></i>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-neon-purple mt-8">Perfil</span>
+                </a>
+                
+                <!-- Recompensas/Loja (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-gift text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Loja</span>
+                </a>
+                
+            </div>
+        </nav>
+
+    </main>
+
+    <style>
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+
+  <script>
+    // nav liberada
+  </script>
+    <script src="tarefito-supabase.js"></script>
+    <script src="tarefito-nav.js"></script>
+</body>
+</html>

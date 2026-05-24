@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tarefito - Criador de Missões</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Fredoka One"', 'cursive'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
+                        },
+                        dark: {
+                            bg: '#0b0e14',
+                            surface: '#161b22',
+                            card: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(168,85,247,0.5)',
+                        'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
+                        'neon-green': '0 0 15px rgba(34,197,94,0.5)',
+                        'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
+                        'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
+                        'btn-press': 'inset 0 4px 6px rgba(0,0,0,0.3)'
+                    },
+                    backgroundImage: {
+                        'radial-burst': 'radial-gradient(circle at center, #1e1b4b 0%, #0b0e14 100%)',
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0e14;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-gaming {
+            background: rgba(11, 14, 20, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .input-gaming:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168,85,247,0.5), inset 0 0 10px rgba(168,85,247,0.2);
+            outline: none;
+        }
+
+        .btn-gaming {
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-gaming:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4) !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            display: none; /* Hide for mobile focus */
+        }
+        
+        /* Particle animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Toggle Switch Gaming */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22c55e;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: rgba(34,197,94,0.2);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            background-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.8);
+        }
+        
+        .toggle-label {
+            width: 48px;
+            height: 24px;
+            background-color: #161b22;
+            border: 2px solid #4b5563;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        /* Custom Radio/Checkbox gaming style */
+        .radio-gaming:checked + div {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59,130,246,0.5);
+            background-color: rgba(59,130,246,0.1);
+        }
+        .radio-gaming:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-purple opacity-10 blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-blue opacity-10 blur-[120px]"></div>
+    </div>
+
+    <!-- Main Container - Mobile First (375x840 target) -->
+    <main class="w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 pb-24">
+        
+        <!-- Top Navigation / Header -->
+        <header id="app-header" class="w-full flex items-center justify-between px-6 py-5 sticky top-0 bg-dark-bg/80 backdrop-blur-md z-50 border-b border-gray-800">
+            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+                Criar Missão
+            </h1>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-900 to-indigo-900 border-2 border-neon-purple shadow-neon-purple overflow-hidden flex items-center justify-center">
+                <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f731e841a3-bb08ed68d9fe92d3ffb8.png" alt="Parent Avatar" />
+            </div>
+        </header>
+
+        <div class="px-6 py-6 flex flex-col gap-6 flex-1">
+            
+            <!-- Mission Basics Form -->
+            <section id="mission-basics" class="flex flex-col gap-4">
+                <div class="glass-panel rounded-[24px] p-5 border border-neon-purple/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-neon-purple opacity-5 blur-[40px] rounded-full"></div>
+                    
+                    <h2 class="font-display text-lg text-white mb-4">Detalhes da Missão</h2>
+                    
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Título da Missão</label>
+                            <input type="text" placeholder="Ex: Arrumar o quarto" class="input-gaming w-full h-12 rounded-xl px-4 text-white placeholder-gray-500 font-bold" />
+                        </div>
+                        
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Descrição</label>
+                            <textarea placeholder="O que precisa ser feito?" class="input-gaming w-full h-24 rounded-xl p-4 text-white placeholder-gray-500 font-bold resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Target & Schedule -->
+            <section id="target-schedule" class="flex flex-col gap-4">
+                <div class="glass-panel rounded-[24px] p-5 border border-neon-blue/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-neon-blue opacity-5 blur-[40px] rounded-full"></div>
+                    
+                    <h2 class="font-display text-lg text-white mb-4">Alvo e Prazo</h2>
+                    
+                    <div class="flex flex-col gap-5">
+                        <div class="flex flex-col gap-3">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quem vai fazer?</label>
+                            <div class="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide">
+                                <label class="relative cursor-pointer shrink-0">
+                                    <input type="checkbox" class="peer sr-only radio-gaming" checked />
+                                    <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
+                                        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f3cd4b941b-cf7cd1a210a7f38425e3.png" class="w-full h-full object-cover" />
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white">Leo</span>
+                                        <div class="absolute top-1 right-1 w-4 h-4 rounded-full bg-neon-blue flex items-center justify-center opacity-0 transform scale-0 transition-all check-icon">
+                                            <i class="fa-solid fa-check text-[8px] text-white"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="relative cursor-pointer shrink-0">
+                                    <input type="checkbox" class="peer sr-only radio-gaming" />
+                                    <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
+                                        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600">
+                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/94ed3d88cd-c8e46ada3713a3b1bdac.png" class="w-full h-full object-cover" />
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white">Mia</span>
+                                        <div class="absolute top-1 right-1 w-4 h-4 rounded-full bg-neon-blue flex items-center justify-center opacity-0 transform scale-0 transition-all check-icon">
+                                            <i class="fa-solid fa-check text-[8px] text-white"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="relative cursor-pointer shrink-0">
+                                    <input type="checkbox" class="peer sr-only radio-gaming" />
+                                    <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
+                                        <div class="w-10 h-10 rounded-full border border-gray-600 bg-dark-bg flex items-center justify-center">
+                                            <i class="fa-solid fa-users text-gray-400"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-white">Todos</span>
+                                        <div class="absolute top-1 right-1 w-4 h-4 rounded-full bg-neon-blue flex items-center justify-center opacity-0 transform scale-0 transition-all check-icon">
+                                            <i class="fa-solid fa-check text-[8px] text-white"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="flex-1 flex flex-col gap-2">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Prazo</label>
+                                <div class="relative">
+                                    <input type="time" class="input-gaming w-full h-12 rounded-xl px-4 text-white font-bold" value="18:00" />
+                                    <i class="fa-regular fa-clock absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 flex flex-col gap-2">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Repetição</label>
+                                <select class="input-gaming w-full h-12 rounded-xl px-4 text-white font-bold appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%233b82f6%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:0.65em_auto]">
+                                    <option value="none">Apenas hoje</option>
+                                    <option value="daily">Diariamente</option>
+                                    <option value="weekly">Semanalmente</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rewards & Difficulty -->
+            <section id="rewards-difficulty" class="flex flex-col gap-4">
+                <div class="glass-panel rounded-[24px] p-5 border border-neon-green/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-neon-green opacity-5 blur-[40px] rounded-full"></div>
+                    
+                    <h2 class="font-display text-lg text-white mb-4">Recompensas e Dificuldade</h2>
+                    
+                    <div class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-3">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Dificuldade</label>
+                            <div class="flex gap-2">
+                                <label class="flex-1 relative cursor-pointer">
+                                    <input type="radio" name="difficulty" class="peer sr-only radio-gaming" checked />
+                                    <div class="h-12 rounded-xl border-2 border-gray-700 bg-dark-surface flex items-center justify-center gap-2 transition-all">
+                                        <span class="text-xs font-bold text-white">Fácil</span>
+                                    </div>
+                                </label>
+                                <label class="flex-1 relative cursor-pointer">
+                                    <input type="radio" name="difficulty" class="peer sr-only radio-gaming" />
+                                    <div class="h-12 rounded-xl border-2 border-gray-700 bg-dark-surface flex items-center justify-center gap-2 transition-all">
+                                        <span class="text-xs font-bold text-white">Médio</span>
+                                    </div>
+                                </label>
+                                <label class="flex-1 relative cursor-pointer">
+                                    <input type="radio" name="difficulty" class="peer sr-only radio-gaming" />
+                                    <div class="h-12 rounded-xl border-2 border-gray-700 bg-dark-surface flex items-center justify-center gap-2 transition-all">
+                                        <span class="text-xs font-bold text-white">Difícil</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-3">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider flex justify-between items-center">
+                                Estrelas de Recompensa
+                                <span class="text-yellow-400 font-display text-lg">15 <i class="fa-solid fa-star"></i></span>
+                            </label>
+                            <input type="range" min="5" max="50" step="5" value="15" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-yellow-400" />
+                            <div class="flex justify-between text-[10px] text-gray-500 font-bold">
+                                <span>5</span>
+                                <span>25</span>
+                                <span>50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action Buttons -->
+            <section id="action-buttons" class="flex gap-3 mt-4 mb-8">
+                <button class="btn-gaming flex-1 h-12 rounded-xl bg-gradient-to-r from-neon-purple to-neon-blue text-white font-display text-base tracking-wide shadow-neon-purple border-b-4 border-purple-900 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rocket text-sm"></i> Publicar Missão
+                </button>
+                <button class="btn-gaming h-12 px-5 rounded-xl bg-dark-surface text-gray-400 font-bold text-sm border border-gray-600 hover:bg-gray-800 hover:text-white hover:border-gray-500 transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-xmark text-sm"></i> Cancelar
+                </button>
+            </section>
+
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50">
+            <div class="max-w-[430px] mx-auto flex justify-around items-center h-20 px-2">
+                <!-- Painel (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Painel</span>
+                </a>
+                
+                <!-- Missões (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
+                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-blue shadow-neon-blue flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-list-check text-neon-blue text-xl"></i>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-neon-blue mt-8">Missões</span>
+                </a>
+                
+                <!-- Filhos (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-users text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Filhos</span>
+                </a>
+                
+                <!-- Recompensas (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-gift text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Prêmios</span>
+                </a>
+                
+                <!-- Aprovação (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors relative">
+                    <div class="absolute top-2 right-2 w-3 h-3 rounded-full bg-neon-pink border-2 border-dark-bg"></div>
+                    <i class="fa-solid fa-check-double text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Validar</span>
+                </a>
+            </div>
+        </nav>
+
+    </main>
+
+
+  <script>
+    // nav liberada
+  </script>
+    <script src="tarefito-supabase.js"></script>
+    <script src="tarefito-nav.js"></script>
+</body>
+</html>
