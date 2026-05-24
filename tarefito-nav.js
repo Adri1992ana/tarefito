@@ -73,11 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!btn) break;
 
       btn.addEventListener('click', async () => {
-        // Detecta modo criança pelo estilo do botão
-        const bg = btn.style.background || btn.style.backgroundColor || '';
-        const isChild = bg.includes('22c55e') || bg.includes('16a34a') ||
-                        btn.classList.contains('btn-child') ||
-                        document.querySelector('.input-gaming-green')?.style?.display !== 'none';
+        // Detecta modo criança pelo elemento PIN visível (form de criança mostra #pin_entry_overlay)
+        const pinOverlay = document.getElementById('pin_entry_overlay');
+        const isChild = pinOverlay && pinOverlay.style.display !== 'none' && pinOverlay.style.display !== '';
 
         if (isChild) {
           const pin = document.querySelector('.input-gaming-green')?.value?.trim();
