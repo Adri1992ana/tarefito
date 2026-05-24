@@ -90,9 +90,18 @@ const DB = {
 
   // ── Família ──
   async getOrCreateFamily(userId, name) {
-    let rows = await db.get('families', 'responsible_id=eq.' + userId + '&select=*');
+    // Busca por owner_id ou responsible_id
+    let rows = await db.get('families', 'owner_id=eq.' + userId + '&select=*');
+    if (!rows?.length) rows = await db.get('families', 'responsible_id=eq.' + userId + '&select=*');
     if (rows && rows.length > 0) { this.family.save(rows[0]); return rows[0]; }
-    const res = await db.post('families', { responsible_id: userId, name: 'Família de ' + name });
+    // Gera code único baseado no userId
+    const code = 'FAM-' + userId.substring(0, 6).toUpperCase();
+    const res = await db.post('families', {
+      owner_id: userId,
+      responsible_id: userId,
+      name: 'Família de ' + name,
+      code: code,
+    });
     const fam = Array.isArray(res) ? res[0] : res;
     this.family.save(fam);
     return fam;

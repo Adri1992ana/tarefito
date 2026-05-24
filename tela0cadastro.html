@@ -784,7 +784,12 @@
                     const r3 = await fetch(SUPA_URL + '/rest/v1/families', {
                         method: 'POST',
                         headers: { ...headers, 'Authorization': 'Bearer ' + d2.access_token, 'Prefer': 'return=representation' },
-                        body: JSON.stringify({ responsible_id: userId, name: 'Família de ' + name })
+                        body: JSON.stringify({
+                            owner_id: userId,
+                            responsible_id: userId,
+                            name: 'Família de ' + name,
+                            code: 'FAM-' + userId.substring(0, 6).toUpperCase(),
+                        })
                     });
                     const d3 = await r3.json();
                     console.log('[familia]', r3.status, d3);
