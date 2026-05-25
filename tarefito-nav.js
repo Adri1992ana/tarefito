@@ -325,7 +325,7 @@ async function _showAddChildForm() {
   // Gera PIN automático
   const autoPin = _generatePin();
 
-  modal.innerHTML = \`
+  modal.innerHTML = `
     <div style="background:#13131a;border:1px solid rgba(168,85,247,0.4);border-radius:24px;
                 padding:28px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(168,85,247,0.2);">
       <h2 style="color:#fff;font-family:'Fredoka One',sans-serif;font-size:20px;margin:0 0 20px;">
@@ -379,7 +379,7 @@ async function _showAddChildForm() {
         </button>
       </div>
     </div>
-  \`;
+  `;
 
   document.body.appendChild(modal);
 
