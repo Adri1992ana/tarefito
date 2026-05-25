@@ -313,22 +313,123 @@ function _childCardHTML(c) {
 }
 
 async function _showAddChildForm() {
-  const name = prompt('Nome do explorador:');
-  if (!name?.trim()) return;
-  const pin  = prompt('Código secreto de acesso (ex: STAR123):');
-  if (!pin?.trim()) return;
-  const goalStr = prompt('Meta semanal de estrelas (padrão: 50):') || '50';
-  const goal = Math.max(1, parseInt(goalStr) || 50);
-  const family = DB.family.get();
-  if (!family) return _toast('Sessão expirada, faça login novamente', 'err');
-  try {
-    await DB.createChild(family.id, name.trim(), pin.trim(), goal);
-    _toast(name + ' adicionado! 🚀', 'ok');
-    await _loadChildren();
-  } catch(e) {
-    console.error(e);
-    _toast('Erro ao criar explorador: ' + (e?.message || JSON.stringify(e)), 'err');
-  }
+  // Modal inline — sem prompt()
+  const existing = document.getElementById('tf-add-child-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'tf-add-child-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;' +
+    'display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  // Gera PIN automático
+  const autoPin = _generatePin();
+
+  modal.innerHTML = \`
+    <div style="background:#13131a;border:1px solid rgba(168,85,247,0.4);border-radius:24px;
+                padding:28px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(168,85,247,0.2);">
+      <h2 style="color:#fff;font-family:'Fredoka One',sans-serif;font-size:20px;margin:0 0 20px;">
+        Novo Explorador
+      </h2>
+
+      <label style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+        Nome do Herói
+      </label>
+      <input id="tf-child-name" type="text" placeholder="Ex: Leo, Mia..."
+        style="width:100%;height:48px;background:#1e1e2e;border:2px solid #374151;border-radius:12px;
+               padding:0 16px;color:#fff;font-weight:700;font-size:15px;margin:8px 0 16px;box-sizing:border-box;" />
+
+      <label style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+        Meta Semanal de Estrelas
+      </label>
+      <input id="tf-child-goal" type="number" value="50" min="10" max="500"
+        style="width:100%;height:48px;background:#1e1e2e;border:2px solid #374151;border-radius:12px;
+               padding:0 16px;color:#fff;font-weight:700;font-size:15px;margin:8px 0 20px;box-sizing:border-box;" />
+
+      <div style="background:#1e1e2e;border:1px solid rgba(34,197,94,0.3);border-radius:16px;padding:16px;margin-bottom:20px;">
+        <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 8px;">
+          Código Secreto (gerado automaticamente)
+        </p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <span id="tf-pin-display" style="color:#22c55e;font-family:'Fredoka One',sans-serif;
+                font-size:28px;letter-spacing:4px;">\${autoPin}</span>
+          <button id="tf-regen-pin" type="button"
+            style="background:#1e1e2e;border:1px solid #374151;border-radius:10px;
+                   padding:8px 14px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
+            🔄 Novo código
+          </button>
+        </div>
+        <p style="color:#6b7280;font-size:11px;margin:8px 0 0;">
+          Anote este código — a criança vai usá-lo para entrar no app.
+        </p>
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button id="tf-cancel-child" type="button"
+          style="flex:1;height:48px;border-radius:14px;border:2px solid #374151;
+                 background:transparent;color:#9ca3af;font-weight:700;cursor:pointer;font-size:14px;">
+          Cancelar
+        </button>
+        <button id="tf-save-child" type="button"
+          style="flex:2;height:48px;border-radius:14px;border:none;
+                 background:linear-gradient(90deg,#a855f7,#3b82f6);color:#fff;
+                 font-family:'Fredoka One',sans-serif;font-size:16px;cursor:pointer;
+                 box-shadow:0 0 20px rgba(168,85,247,0.4);">
+          Criar Explorador 🚀
+        </button>
+      </div>
+    </div>
+  \`;
+
+  document.body.appendChild(modal);
+
+  // Foco no nome
+  setTimeout(() => document.getElementById('tf-child-name')?.focus(), 100);
+
+  // Regenerar PIN
+  document.getElementById('tf-regen-pin').addEventListener('click', () => {
+    const newPin = _generatePin();
+    document.getElementById('tf-pin-display').textContent = newPin;
+    document.getElementById('tf-regen-pin').dataset.pin = newPin;
+  });
+
+  // Cancelar
+  document.getElementById('tf-cancel-child').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  // Salvar
+  document.getElementById('tf-save-child').addEventListener('click', async () => {
+    const name = document.getElementById('tf-child-name').value.trim();
+    const goal = parseInt(document.getElementById('tf-child-goal').value) || 50;
+    const pin  = document.getElementById('tf-pin-display').textContent.trim();
+    const family = DB.family.get();
+
+    if (!name) { document.getElementById('tf-child-name').style.borderColor = '#ef4444'; return; }
+    if (!family) return _toast('Sessão expirada, faça login novamente', 'err');
+
+    const saveBtn = document.getElementById('tf-save-child');
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    saveBtn.disabled = true;
+
+    try {
+      await DB.createChild(family.id, name, pin, goal);
+      modal.remove();
+      _toast(name + ' adicionado com código ' + pin + '! 🚀', 'ok');
+      await _loadChildren();
+    } catch(e) {
+      console.error(e);
+      saveBtn.innerHTML = 'Criar Explorador 🚀';
+      saveBtn.disabled = false;
+      _toast('Erro: ' + (e?.message || JSON.stringify(e)), 'err');
+    }
+  });
+}
+
+function _generatePin() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let pin = '';
+  for (let i = 0; i < 6; i++) pin += chars[Math.floor(Math.random() * chars.length)];
+  return pin;
 }
 
 async function _loadDashboard() {
