@@ -508,13 +508,14 @@ async function _loadChildCheckboxes() {
 }
 
 async function _submitTask() {
-  const family = DB.family.get();
-  if (!family) return _toast('Sessão expirada', 'err');
+  const family  = DB.family.get();
+  const session = DB.session.get();
+  if (!family || !session) return _toast('Sessão expirada', 'err');
+  const parentId = session.user?.id || family.owner_id;
 
   const title = document.querySelector('#mission-basics input[type="text"]')?.value?.trim();
   if (!title) return _toast('Digite o título da missão!', 'err');
 
-  const desc   = document.querySelector('#mission-basics textarea')?.value?.trim() || '';
   const stars  = parseInt(document.querySelector('input[type="range"]')?.value || '15');
   const repeat = document.querySelector('select')?.value || 'none';
 
@@ -530,8 +531,8 @@ async function _submitTask() {
   if (publishBtn) { publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; publishBtn.disabled = true; }
 
   try {
-    await Promise.all(targets.map(memberId =>
-      DB.createTask(family.id, { title, description: desc, assigned_to: memberId, stars_reward: stars, repeat_type: repeat })
+    await Promise.all(targets.map(childId =>
+      DB.createTask(parentId, { name: title, child_id: childId, stars, recorrente: repeat !== 'none' })
     ));
     _toast('Missão publicada! 🚀', 'ok');
     setTimeout(() => Tarefito.navigate('dashboard'), 1200);
@@ -543,13 +544,15 @@ async function _submitTask() {
 }
 
 async function _loadPendingTasks() {
-  const family = DB.family.get();
-  if (!family) return;
+  const family  = DB.family.get();
+  const session = DB.session.get();
+  if (!family || !session) return;
+  const parentId = session.user?.id || family.owner_id;
   const queue = document.getElementById('approval-queue');
   if (!queue) return;
 
   try {
-    const tasks = await DB.getPendingApproval(family.id);
+    const tasks = await DB.getPendingApproval(parentId);
 
     // Limpa cards mockados
     queue.innerHTML = '';
@@ -573,11 +576,11 @@ async function _loadPendingTasks() {
       div.innerHTML = `
         <div class="flex justify-between items-start">
           <div>
-            <p class="font-display text-base text-white">${t.title}</p>
+            <p class="font-display text-base text-white">${t.name}</p>
             <span class="text-xs text-gray-400">${t.members?.name || 'Criança'}</span>
           </div>
           <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
-            <span class="text-xs font-display text-yellow-400">${t.stars_reward}</span>
+            <span class="text-xs font-display text-yellow-400">${t.stars}</span>
             <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
           </div>
         </div>
@@ -599,13 +602,13 @@ async function _loadPendingTasks() {
       div.querySelector('.btn-aprovar').addEventListener('click', async () => {
         try {
           await DB.updateTaskStatus(t.id, 'approved');
-          if (t.assigned_to) {
-            const rows = await db.get('members', 'id=eq.' + t.assigned_to + '&select=stars');
+          if (t.child_id) {
+            const rows = await db.get('members', 'id=eq.' + t.child_id + '&select=stars');
             const cur  = rows?.[0]?.stars || 0;
-            await DB.updateChild(t.assigned_to, { stars: cur + (t.stars_reward||0) });
+            await DB.updateChild(t.child_id, { stars: cur + (t.stars||0) });
           }
           div.remove();
-          _toast('+' + t.stars_reward + '⭐ aprovados!', 'ok');
+          _toast('+' + t.stars + '⭐ aprovados!', 'ok');
         } catch(e) { _toast('Erro: ' + JSON.stringify(e), 'err'); }
       });
 
@@ -710,8 +713,10 @@ async function _loadChildDashboard(child) {
   if (!family) return;
 
   try {
-    const tasks = await DB.getTasks(family.id, child.id);
-    const pending = (tasks||[]).filter(t => t.status === 'pending' || t.status === 'in_progress');
+    const session = DB.session.get();
+    const parentId = session?.user?.id || family.owner_id;
+    const tasks = await DB.getTasks(parentId, child.id);
+    const pending = (tasks||[]).filter(t => !t.done);
 
     const missionSection = document.getElementById('active-missions');
     if (!missionSection) return;
@@ -735,13 +740,12 @@ async function _loadChildDashboard(child) {
             <i class="fa-solid fa-list-check text-neon-blue text-lg"></i>
           </div>
           <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
-            <span class="text-xs font-display text-yellow-400">+${t.stars_reward}</span>
+            <span class="text-xs font-display text-yellow-400">+${t.stars}</span>
             <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
           </div>
         </div>
         <div>
-          <p class="font-display text-sm text-white">${t.title}</p>
-          ${t.description ? `<p class="text-[10px] text-gray-400 mt-1">${t.description}</p>` : ''}
+          <p class="font-display text-sm text-white">${t.name}</p>
         </div>
         <button class="btn-iniciar btn-gaming h-10 rounded-xl bg-gradient-to-r from-neon-blue
           to-cyan-600 text-white font-display text-xs border-b-2 border-blue-900
@@ -767,10 +771,10 @@ function _loadMissionDetail() {
   if (!mission) return;
 
   const titleEl = document.querySelector('#mission-header h2, #mission-header .font-display');
-  if (titleEl) titleEl.textContent = mission.title;
+  if (titleEl) titleEl.textContent = mission.name;
 
   const starsEl = document.querySelector('#mission-header .font-display.text-xl, #mission-header .text-yellow-400');
-  if (starsEl && starsEl.textContent.includes('+')) starsEl.textContent = '+' + mission.stars_reward;
+  if (starsEl && starsEl.textContent.includes('+')) starsEl.textContent = '+' + mission.stars;
 
   if (mission.description) {
     const descEl = document.querySelector('#mission-description p');

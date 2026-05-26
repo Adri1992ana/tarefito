@@ -119,19 +119,19 @@ const DB = {
   },
 
   // ── Tasks ──
-  async getTasks(familyId, memberId) {
-    let p = 'family_id=eq.' + familyId + '&select=*&order=created_at.desc';
-    if (memberId) p += '&assigned_to=eq.' + memberId;
+  async getTasks(parentId, childId) {
+    let p = 'parent_id=eq.' + parentId + '&select=*&order=created_at.desc';
+    if (childId) p += '&child_id=eq.' + childId;
     return db.get('tasks', p);
   },
-  async createTask(familyId, data) {
-    return db.post('tasks', Object.assign({ family_id: familyId, status: 'pending' }, data));
+  async createTask(parentId, data) {
+    return db.post('tasks', Object.assign({ parent_id: parentId, done: false }, data));
   },
   async updateTaskStatus(taskId, status) {
-    return db.patch('tasks', { status }, 'id=eq.' + taskId);
+    return db.patch('tasks', { done: status === 'approved' }, 'id=eq.' + taskId);
   },
-  async getPendingApproval(familyId) {
-    return db.get('tasks', 'family_id=eq.' + familyId + '&status=eq.submitted&select=*,members(name,id)');
+  async getPendingApproval(parentId) {
+    return db.get('tasks', 'parent_id=eq.' + parentId + '&done=eq.false&select=*');
   },
 
   // ── Rewards ──
