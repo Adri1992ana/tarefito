@@ -21,11 +21,25 @@ const db = {
   },
   async _req(method, path, body, params) {
     const url = SUPABASE_URL + '/rest/v1/' + path + (params ? '?' + params : '');
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       method,
       headers: this._headers(),
       body: body ? JSON.stringify(body) : undefined,
     });
+    if (res.status === 401) {
+      const refreshed = await auth.refreshSession();
+      if (refreshed) {
+        res = await fetch(url, {
+          method,
+          headers: this._headers(),
+          body: body ? JSON.stringify(body) : undefined,
+        });
+      } else {
+        sessionStorage.clear();
+        window.location.href = 'login_copy.html';
+        return;
+      }
+    }
     const text = await res.text();
     const data = text ? JSON.parse(text) : null;
     if (!res.ok) { console.error('[db]', method, path, res.status, data); throw data; }
@@ -62,6 +76,21 @@ const auth = {
       }).catch(() => {});
     }
     sessionStorage.clear();
+  },
+
+  async refreshSession() {
+    const s = DB.session.get();
+    if (!s?.refresh_token) return false;
+    try {
+      const res = await fetch(this._url + '/token?grant_type=refresh_token', {
+        method: 'POST', headers: this._h,
+        body: JSON.stringify({ refresh_token: s.refresh_token }),
+      });
+      const data = await res.json();
+      if (!res.ok) return false;
+      DB.session.save(data);
+      return true;
+    } catch { return false; }
   },
 };
 
