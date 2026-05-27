@@ -423,12 +423,14 @@ function _generatePin() {
 }
 
 async function _loadDashboard() {
-  const family = DB.family.get();
-  if (!family) return;
+  const family  = DB.family.get();
+  const session = DB.session.get();
+  if (!family || !session) return;
+  const parentId = session.user?.id || family.owner_id;
   try {
     const [children, pending] = await Promise.all([
-      DB.getChildren(family.id),
-      DB.getPendingApproval(family.id),
+      DB.getChildren(parentId),
+      DB.getPendingApproval(parentId),
     ]);
     const totalStars = (children||[]).reduce((s,c) => s+(c.stars||0), 0);
 
@@ -460,9 +462,11 @@ async function _loadDashboard() {
 }
 
 async function _loadChildCheckboxes() {
-  const family = DB.family.get();
-  if (!family) return;
-  const children = await DB.getChildren(family.id).catch(() => []);
+  const family  = DB.family.get();
+  const session = DB.session.get();
+  if (!family || !session) return;
+  const parentId = session.user?.id || family.owner_id;
+  const children = await DB.getChildren(parentId).catch(() => []);
   if (!children?.length) return;
 
   // Encontra o container dos checkboxes de crianças
