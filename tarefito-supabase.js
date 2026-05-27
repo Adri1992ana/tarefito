@@ -136,13 +136,13 @@ const DB = {
 
   // ── Children ──
   async getChildren(parentId) {
-    return db.get('membros', 'parent_id=eq.' + parentId + '&select=*&order=name.asc');
+    return db.get('members', 'parent_id=eq.' + parentId + '&select=*&order=name.asc');
   },
   async createChild(parentId, name, pin, weeklyGoal) {
-    return db.post('membros', { parent_id: parentId, name, pin, stars: 0, weekly_goal: weeklyGoal || 50 });
+    return db.post('members', { parent_id: parentId, name, pin, stars: 0, weekly_goal: weeklyGoal || 50 });
   },
   async updateChild(childId, updates) {
-    return db.patch('membros', updates, 'id=eq.' + childId);
+    return db.patch('members', updates, 'id=eq.' + childId);
   },
 
   // ── Tasks ──

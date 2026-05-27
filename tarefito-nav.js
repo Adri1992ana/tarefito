@@ -81,12 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!pin) return _toast('Digite o código secreto!', 'err');
           try {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            const members = await db.get('membros', 'pin=eq.' + encodeURIComponent(pin) + '&select=*');
+            const members = await db.get('members', 'pin=eq.' + encodeURIComponent(pin) + '&select=*');
             if (!members?.length) {
               btn.innerHTML = 'INICIAR MISSÃO <i class="fa-solid fa-rocket"></i>';
               return _toast('Código secreto inválido!', 'err');
             }
-            const fam = await db.get('profiles', 'id=eq.' + members[0].parent_id + '&select=*');
+            const fam = await db.get('families', 'owner_id=eq.' + members[0].parent_id + '&select=*');
             if (fam?.[0]) DB.family.save(fam[0]);
             DB.child.save(members[0]);
             Tarefito.navigate('dashboardCrianca');

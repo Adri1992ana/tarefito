@@ -6,7 +6,7 @@
 DROP TABLE IF EXISTS redemptions CASCADE;
 DROP TABLE IF EXISTS rewards     CASCADE;
 DROP TABLE IF EXISTS tasks       CASCADE;
-DROP TABLE IF EXISTS membros     CASCADE;
+DROP TABLE IF EXISTS members     CASCADE;
 DROP TABLE IF EXISTS families    CASCADE;
 
 -- ── Famílias (perfil do responsável) ────────────────────────
@@ -20,7 +20,7 @@ CREATE TABLE families (
 );
 
 -- ── Membros / Crianças ────────────────────────────────────────
-CREATE TABLE membros (
+CREATE TABLE members (
     id          uuid        DEFAULT gen_random_uuid() PRIMARY KEY,
     parent_id   uuid,
     name        text        NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE redemptions (
 GRANT USAGE ON SCHEMA public TO anon, authenticated, authenticator;
 
 GRANT ALL ON families    TO anon, authenticated, authenticator;
-GRANT ALL ON membros     TO anon, authenticated, authenticator;
+GRANT ALL ON members     TO anon, authenticated, authenticator;
 GRANT ALL ON tasks       TO anon, authenticated, authenticator;
 GRANT ALL ON rewards     TO anon, authenticated, authenticator;
 GRANT ALL ON redemptions TO anon, authenticated, authenticator;
