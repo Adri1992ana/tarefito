@@ -227,16 +227,17 @@ document.addEventListener('DOMContentLoaded', () => {
 // ════════════════════════════════════════════════════════════
 
 async function _loadChildren() {
-  const family = DB.family.get();
-  if (!family) return;
+  const family  = DB.family.get();
+  const session = DB.session.get();
+  if (!family || !session) return;
+  const parentId = session.user?.id || family.owner_id;
   const list = document.getElementById('children-list');
   if (!list) return;
 
-  try {
-    const children = await DB.getChildren(family.id);
+  list.innerHTML = '';
 
-    // Limpa TODOS os cards mockados e botão mockado
-    list.innerHTML = '';
+  try {
+    const children = await DB.getChildren(parentId);
 
     if (!children?.length) {
       list.innerHTML = `<div class="glass-panel rounded-[24px] p-8 border border-gray-700 text-center">
@@ -257,18 +258,17 @@ async function _loadChildren() {
         });
       });
     }
+  } catch(e) { console.error('[loadChildren]', e); }
 
-    // Botão Novo Explorador
-    const addBtn = document.createElement('button');
-    addBtn.type = 'button';
-    addBtn.className = 'btn-gaming w-full h-16 rounded-[24px] border-2 border-dashed border-gray-700 ' +
-      'bg-dark-surface/30 flex items-center justify-center gap-3 text-gray-400 ' +
-      'hover:text-neon-purple hover:border-neon-purple transition-all';
-    addBtn.innerHTML = '<i class="fa-solid fa-plus text-lg"></i><span class="font-display text-base">Novo Explorador</span>';
-    addBtn.addEventListener('click', _showAddChildForm);
-    list.appendChild(addBtn);
-
-  } catch(e) { console.error('[loadChildren]', e); _toast('Erro ao carregar exploradores', 'err'); }
+  // Botão sempre visível independente de erro
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'btn-gaming w-full h-16 rounded-[24px] border-2 border-dashed border-gray-700 ' +
+    'bg-dark-surface/30 flex items-center justify-center gap-3 text-gray-400 ' +
+    'hover:text-neon-purple hover:border-neon-purple transition-all';
+  addBtn.innerHTML = '<i class="fa-solid fa-plus text-lg"></i><span class="font-display text-base">Novo Explorador</span>';
+  addBtn.addEventListener('click', _showAddChildForm);
+  list.appendChild(addBtn);
 }
 
 function _childCardHTML(c) {
