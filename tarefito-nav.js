@@ -342,7 +342,7 @@ async function _showAddChildForm() {
         </p>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
           <span id="tf-pin-display" style="color:#22c55e;font-family:'Fredoka One',sans-serif;
-                font-size:28px;letter-spacing:4px;">\${autoPin}</span>
+                font-size:28px;letter-spacing:4px;">${autoPin}</span>
           <button id="tf-regen-pin" type="button"
             style="background:#1e1e2e;border:1px solid #374151;border-radius:10px;
                    padding:8px 14px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
