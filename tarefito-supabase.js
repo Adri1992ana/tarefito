@@ -119,19 +119,19 @@ const DB = {
 
   // ── Família ──
   async getOrCreateFamily(userId, name) {
-    const rows = await db.get('profiles', 'id=eq.' + userId + '&select=*');
+    let rows = await db.get('families', 'owner_id=eq.' + userId + '&select=*');
+    if (!rows?.length) rows = await db.get('families', 'responsible_id=eq.' + userId + '&select=*');
     if (rows?.length) { this.family.save(rows[0]); return rows[0]; }
-    try {
-      const res = await db.post('profiles', { id: userId, full_name: name });
-      const fam = Array.isArray(res) ? res[0] : res;
-      this.family.save(fam);
-      return fam;
-    } catch {
-      const rows2 = await db.get('profiles', 'id=eq.' + userId + '&select=*');
-      const fam = rows2?.[0];
-      if (fam) this.family.save(fam);
-      return fam;
-    }
+    const code = 'FAM-' + userId.substring(0, 6).toUpperCase();
+    const res = await db.post('families', {
+      owner_id: userId,
+      responsible_id: userId,
+      name: 'Família de ' + name,
+      code,
+    });
+    const fam = Array.isArray(res) ? res[0] : res;
+    this.family.save(fam);
+    return fam;
   },
 
   // ── Children ──
