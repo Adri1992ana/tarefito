@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!pin) return _toast('Digite o código secreto!', 'err');
           try {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            const members = await db.get('children', 'pin=eq.' + encodeURIComponent(pin) + '&select=*');
+            const members = await db.get('membros', 'pin=eq.' + encodeURIComponent(pin) + '&select=*');
             if (!members?.length) {
               btn.innerHTML = 'INICIAR MISSÃO <i class="fa-solid fa-rocket"></i>';
               return _toast('Código secreto inválido!', 'err');
