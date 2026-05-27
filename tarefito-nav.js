@@ -15,7 +15,6 @@ const Tarefito = {
     dashboardCrianca:  'tela7dashboardvisaocrianca.html',
     realizandoTarefa:  'tela8realizandotarefa.html',
     lojaCrianca:       'tela9lojavisaocrianca.html',
-    perfilCrianca:     'tela10perfilcrianca.html',
   },
   navigate(key) {
     const p = this.pages[key];
@@ -82,12 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!pin) return _toast('Digite o código secreto!', 'err');
           try {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            const members = await db.get('members', 'pin=eq.' + encodeURIComponent(pin) + '&role=eq.child&select=*');
+            const members = await db.get('children', 'pin=eq.' + encodeURIComponent(pin) + '&select=*');
             if (!members?.length) {
               btn.innerHTML = 'INICIAR MISSÃO <i class="fa-solid fa-rocket"></i>';
               return _toast('Código secreto inválido!', 'err');
             }
-            const fam = await db.get('families', 'id=eq.' + members[0].family_id + '&select=*');
+            const fam = await db.get('profiles', 'id=eq.' + members[0].parent_id + '&select=*');
             if (fam?.[0]) DB.family.save(fam[0]);
             DB.child.save(members[0]);
             Tarefito.navigate('dashboardCrianca');
@@ -220,15 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
       break;
     }
 
-    // ════════════ PERFIL CRIANÇA ═════════════════════════
-    case 'tela10perfilcrianca.html': {
-      const child = DB.child.get();
-      if (!child) { Tarefito.navigate('login'); break; }
-      _loadChildProfile(child);
-      _bindBackBtn();
-      _bindBottomNavChild();
-      break;
-    }
   }
 });
 
@@ -890,7 +880,7 @@ function _bindBottomNav() {
 
 // Nav criança — mapeia por texto do span
 function _bindBottomNavChild() {
-  const map = { 'Dashboard':'dashboardCrianca', 'Missões':'dashboardCrianca', 'Perfil':'perfilCrianca', 'Loja':'lojaCrianca' };
+  const map = { 'Dashboard':'dashboardCrianca', 'Missões':'dashboardCrianca', 'Loja':'lojaCrianca' };
   document.querySelectorAll('nav a').forEach(a => {
     const label = a.querySelector('span')?.textContent?.trim();
     if (label && map[label]) {

@@ -119,32 +119,30 @@ const DB = {
 
   // ── Família ──
   async getOrCreateFamily(userId, name) {
-    // Busca por owner_id ou responsible_id
-    let rows = await db.get('families', 'owner_id=eq.' + userId + '&select=*');
-    if (!rows?.length) rows = await db.get('families', 'responsible_id=eq.' + userId + '&select=*');
-    if (rows && rows.length > 0) { this.family.save(rows[0]); return rows[0]; }
-    // Gera code único baseado no userId
-    const code = 'FAM-' + userId.substring(0, 6).toUpperCase();
-    const res = await db.post('families', {
-      owner_id: userId,
-      responsible_id: userId,
-      name: 'Família de ' + name,
-      code: code,
-    });
-    const fam = Array.isArray(res) ? res[0] : res;
-    this.family.save(fam);
-    return fam;
+    const rows = await db.get('profiles', 'id=eq.' + userId + '&select=*');
+    if (rows?.length) { this.family.save(rows[0]); return rows[0]; }
+    try {
+      const res = await db.post('profiles', { id: userId, full_name: name });
+      const fam = Array.isArray(res) ? res[0] : res;
+      this.family.save(fam);
+      return fam;
+    } catch {
+      const rows2 = await db.get('profiles', 'id=eq.' + userId + '&select=*');
+      const fam = rows2?.[0];
+      if (fam) this.family.save(fam);
+      return fam;
+    }
   },
 
-  // ── Members ──
-  async getChildren(familyId) {
-    return db.get('members', 'family_id=eq.' + familyId + '&role=eq.child&select=*&order=name.asc');
+  // ── Children ──
+  async getChildren(parentId) {
+    return db.get('children', 'parent_id=eq.' + parentId + '&select=*&order=name.asc');
   },
-  async createChild(familyId, name, pin, weeklyGoal) {
-    return db.post('members', { family_id: familyId, name, pin, role: 'child', stars: 0, weekly_goal: weeklyGoal || 50 });
+  async createChild(parentId, name, pin, weeklyGoal) {
+    return db.post('children', { parent_id: parentId, name, pin, stars: 0, weekly_goal: weeklyGoal || 50 });
   },
-  async updateChild(memberId, updates) {
-    return db.patch('members', updates, 'id=eq.' + memberId);
+  async updateChild(childId, updates) {
+    return db.patch('children', updates, 'id=eq.' + childId);
   },
 
   // ── Tasks ──
@@ -164,19 +162,19 @@ const DB = {
   },
 
   // ── Rewards ──
-  async getRewards(familyId) {
-    return db.get('rewards', 'family_id=eq.' + familyId + '&select=*&order=cost.asc');
+  async getRewards(parentId) {
+    return db.get('rewards', 'parent_id=eq.' + parentId + '&select=*&order=cost.asc');
   },
-  async createReward(familyId, data) {
-    return db.post('rewards', Object.assign({ family_id: familyId }, data));
+  async createReward(parentId, data) {
+    return db.post('rewards', Object.assign({ parent_id: parentId }, data));
   },
   async deleteReward(rewardId) {
     return db.delete('rewards', 'id=eq.' + rewardId);
   },
 
   // ── Redemptions ──
-  async requestRedemption(memberId, rewardId, starCost) {
-    return db.post('redemptions', { member_id: memberId, reward_id: rewardId, star_cost: starCost, status: 'pending' });
+  async requestRedemption(childId, rewardId, starCost) {
+    return db.post('redemptions', { child_id: childId, reward_id: rewardId, star_cost: starCost, status: 'pending' });
   },
 };
 
