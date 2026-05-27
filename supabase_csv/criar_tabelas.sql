@@ -64,6 +64,13 @@ CREATE TABLE redemptions (
     created_at timestamptz DEFAULT now()
 );
 
+-- ── Desativa RLS (MVP) ───────────────────────────────────────
+ALTER TABLE families    DISABLE ROW LEVEL SECURITY;
+ALTER TABLE members     DISABLE ROW LEVEL SECURITY;
+ALTER TABLE tasks       DISABLE ROW LEVEL SECURITY;
+ALTER TABLE rewards     DISABLE ROW LEVEL SECURITY;
+ALTER TABLE redemptions DISABLE ROW LEVEL SECURITY;
+
 -- ── Permissões ───────────────────────────────────────────────
 GRANT USAGE ON SCHEMA public TO anon, authenticated, authenticator;
 

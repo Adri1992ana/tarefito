@@ -385,17 +385,19 @@ async function _showAddChildForm() {
     const name = document.getElementById('tf-child-name').value.trim();
     const goal = 50;
     const pin  = document.getElementById('tf-pin-display').textContent.trim();
-    const family = DB.family.get();
+    const family  = DB.family.get();
+    const session = DB.session.get();
 
     if (!name) { document.getElementById('tf-child-name').style.borderColor = '#ef4444'; return; }
-    if (!family) return _toast('Sessão expirada, faça login novamente', 'err');
+    if (!family || !session) return _toast('Sessão expirada, faça login novamente', 'err');
 
+    const parentId = session.user?.id || family.owner_id;
     const saveBtn = document.getElementById('tf-save-child');
     saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
     saveBtn.disabled = true;
 
     try {
-      await DB.createChild(family.id, name, pin, goal);
+      await DB.createChild(parentId, name, pin, goal);
       modal.remove();
       _toast(name + ' adicionado com código ' + pin + '! 🚀', 'ok');
       await _loadChildren();
