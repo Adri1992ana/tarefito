@@ -329,13 +329,6 @@ async function _showAddChildForm() {
         style="width:100%;height:48px;background:#1e1e2e;border:2px solid #374151;border-radius:12px;
                padding:0 16px;color:#fff;font-weight:700;font-size:15px;margin:8px 0 16px;box-sizing:border-box;" />
 
-      <label style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
-        Meta Semanal de Estrelas
-      </label>
-      <input id="tf-child-goal" type="number" value="50" min="10" max="500"
-        style="width:100%;height:48px;background:#1e1e2e;border:2px solid #374151;border-radius:12px;
-               padding:0 16px;color:#fff;font-weight:700;font-size:15px;margin:8px 0 20px;box-sizing:border-box;" />
-
       <div style="background:#1e1e2e;border:1px solid rgba(34,197,94,0.3);border-radius:16px;padding:16px;margin-bottom:20px;">
         <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 8px;">
           Código Secreto (gerado automaticamente)
@@ -390,7 +383,7 @@ async function _showAddChildForm() {
   // Salvar
   document.getElementById('tf-save-child').addEventListener('click', async () => {
     const name = document.getElementById('tf-child-name').value.trim();
-    const goal = parseInt(document.getElementById('tf-child-goal').value) || 50;
+    const goal = 50;
     const pin  = document.getElementById('tf-pin-display').textContent.trim();
     const family = DB.family.get();
 
