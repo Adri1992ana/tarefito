@@ -5,7 +5,7 @@
 
 const Tarefito = {
   pages: {
-    login:             'login_copy.html',
+    login:             'login.html',
     cadastro:          'tela0cadastro.html',
     gerenciarCriancas: 'tela2gerenciarcriancas.html',
     dashboard:         'tela3dashboard.html',
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   switch (page) {
 
     // ════════════ LOGIN ═════════════════════════════════════
-    case 'login_copy.html': {
+    case 'login.html': {
       const btn = document.getElementById('cta-btn');
       if (!btn) break;
 
@@ -297,7 +297,6 @@ function _childCardHTML(c) {
         <i class="fa-solid fa-${c.pin ? 'lock' : 'unlock-keyhole'}"></i>
         <span>PIN: ${c.pin ? '••••' : 'Não configurado'}</span>
       </div>
-      <span>Meta: <b class="text-white">${c.weekly_goal || 50}⭐/sem</b></span>
     </div>
   </div>`;
 }
@@ -777,7 +776,6 @@ async function _submitMissionDone() {
   const note = document.querySelector('#evidence-submission textarea')?.value?.trim() || '';
   try {
     await DB.updateTaskStatus(mission.id, 'submitted');
-    if (note) await db.patch('tasks', { evidence_note: note }, 'id=eq.' + mission.id);
     DB.mission.clear();
     _toast('Missão enviada para aprovação! ⭐', 'ok');
     setTimeout(() => Tarefito.navigate('dashboardCrianca'), 1500);
@@ -879,10 +877,16 @@ function _bindBottomNav() {
 
 // Nav criança — mapeia por texto do span
 function _bindBottomNavChild() {
-  const map = { 'Dashboard':'dashboardCrianca', 'Missões':'dashboardCrianca', 'Loja':'lojaCrianca' };
+  const map = { 'Missões':'dashboardCrianca', 'Loja':'lojaCrianca' };
   document.querySelectorAll('nav a').forEach(a => {
     const label = a.querySelector('span')?.textContent?.trim();
-    if (label && map[label]) {
+    if (!label) return;
+    if (label === 'Sair') {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        auth.signOut().then(() => Tarefito.navigate('login'));
+      });
+    } else if (map[label]) {
       a.addEventListener('click', e => { e.preventDefault(); Tarefito.navigate(map[label]); });
     }
   });

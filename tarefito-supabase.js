@@ -36,7 +36,7 @@ const db = {
         });
       } else {
         sessionStorage.clear();
-        window.location.href = 'login_copy.html';
+        window.location.href = 'login.html';
         return;
       }
     }
@@ -181,7 +181,7 @@ const DB = {
 // ─── Guard de auth ─────────────────────────────────────────────
 function requireAuth() {
   if (!DB.session.get()?.access_token) {
-    window.location.href = 'login_copy.html';
+    window.location.href = 'login.html';
     return false;
   }
   return true;
