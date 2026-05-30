@@ -156,76 +156,76 @@
     <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-[0.08] blur-[100px] pointer-events-none" style="background:#3b82f6;"></div>
 
     <!-- Main Container - Mobile First (375x840 target) -->
-    <main class="w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 px-6 py-8">
+    <main class="w-full max-w-[430px] mx-auto min-h-[100dvh] flex flex-col relative z-10 px-6 py-5">
 
         <!-- Logo -->
-        <div class="flex flex-col items-center mb-6">
+        <div class="flex flex-col items-center mb-4">
             <div class="relative flex items-center justify-center">
-                <div class="absolute w-[180px] h-[180px] rounded-full opacity-20 blur-[40px]" style="background:#a855f7;"></div>
+                <div class="absolute w-[130px] h-[130px] rounded-full opacity-20 blur-[36px]" style="background:#a855f7;"></div>
                 <img src="logo.png" alt="Tarefito"
                      class="relative z-10"
-                     style="width:180px; height:180px; object-fit:contain;
-                            filter:drop-shadow(0 0 22px rgba(168,85,247,0.65)) drop-shadow(0 0 8px rgba(59,130,246,0.4));"
+                     style="width:130px; height:130px; object-fit:contain;
+                            filter:drop-shadow(0 0 18px rgba(168,85,247,0.65)) drop-shadow(0 0 6px rgba(59,130,246,0.4));"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-                <h1 style="display:none; font-family:'Fredoka One',cursive; font-size:40px;
+                <h1 style="display:none; font-family:'Fredoka One',cursive; font-size:36px;
                            background:linear-gradient(180deg,#fff 0%,#a855f7 50%,#3b82f6 100%);
                            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
                            filter:drop-shadow(0 0 10px rgba(168,85,247,0.7)); margin:0; line-height:1;">TAREFITO</h1>
             </div>
-            <p style="color:rgba(192,132,252,0.85); font-weight:600; letter-spacing:0.04em; font-size:13px; margin:4px 0 0; font-family:'Nunito',sans-serif;">Moldando hábitos. Formando pessoas.</p>
-            <div style="width:60px; height:1px; background:rgba(255,255,255,0.12); margin:7px auto;"></div>
-            <p style="color:rgba(255,255,255,0.22); font-weight:700; letter-spacing:0.22em; font-size:9px; text-transform:uppercase; margin:0; font-family:'Nunito',sans-serif;">Tecnologia com propósito</p>
+            <p style="color:rgba(192,132,252,0.85); font-weight:600; letter-spacing:0.04em; font-size:12px; margin:3px 0 0; font-family:'Nunito',sans-serif;">Moldando hábitos. Formando pessoas.</p>
+            <div style="width:50px; height:1px; background:rgba(255,255,255,0.12); margin:5px auto;"></div>
+            <p style="color:rgba(255,255,255,0.22); font-weight:700; letter-spacing:0.22em; font-size:8px; text-transform:uppercase; margin:0; font-family:'Nunito',sans-serif;">Tecnologia com propósito</p>
         </div>
 
         <!-- Profile Selection -->
-        <div class="mb-5">
-            <p class="text-center text-gray-300 font-bold text-xs uppercase tracking-widest mb-3">Escolha seu perfil</p>
+        <div class="mb-4">
+            <p class="text-center text-gray-300 font-bold text-xs uppercase tracking-widest mb-2">Escolha seu perfil</p>
             <div class="grid grid-cols-2 gap-3">
 
                 <!-- Responsável -->
                 <div class="profile-card glass-panel active"
-                     style="border-radius:20px; padding:18px 10px 14px; display:flex; flex-direction:column; align-items:center;
+                     style="border-radius:20px; padding:12px 10px 10px; display:flex; flex-direction:column; align-items:center;
                             border:2px solid #a855f7; position:relative; overflow:hidden;
                             --active-color:#a855f7; --active-glow:rgba(168,85,247,0.45);"
                      onclick="selectProfile(this,'adult')">
-                    <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%;
+                    <div style="position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%;
                                 background:#0b0e14; border:1px solid #a855f7;
                                 display:flex; align-items:center; justify-content:center;
                                 box-shadow:0 0 8px rgba(168,85,247,0.5);">
-                        <i class="fa-solid fa-check check-icon" style="color:#a855f7; font-size:9px; opacity:1;"></i>
+                        <i class="fa-solid fa-check check-icon" style="color:#a855f7; font-size:8px; opacity:1;"></i>
                     </div>
                     <img src="icon-responsavel.png" alt="Responsável"
-                         style="width:100px; height:100px; object-fit:contain; margin-bottom:10px;
+                         style="width:88px; height:88px; object-fit:contain; margin-bottom:6px;
                                 filter:drop-shadow(0 0 14px rgba(168,85,247,0.75));"
-                         onerror="this.outerHTML='<div style=\'width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#581c87,#3730a3);box-shadow:0 0 14px rgba(168,85,247,0.6);margin-bottom:10px;\'></div>';" />
-                    <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Responsáveis</span>
-                    <span style="font-size:10px; color:#c084fc; font-weight:700; margin-top:2px;">Mestres das Missões</span>
+                         onerror="this.outerHTML='<div style=\'width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#581c87,#3730a3);box-shadow:0 0 14px rgba(168,85,247,0.6);margin-bottom:6px;\'></div>';" />
+                    <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:15px;">Responsáveis</span>
+                    <span style="font-size:10px; color:#c084fc; font-weight:700; margin-top:1px;">Mestres das Missões</span>
                 </div>
 
                 <!-- Aventureiro -->
                 <div class="profile-card glass-panel"
-                     style="border-radius:20px; padding:18px 10px 14px; display:flex; flex-direction:column; align-items:center;
+                     style="border-radius:20px; padding:12px 10px 10px; display:flex; flex-direction:column; align-items:center;
                             border:2px solid transparent; position:relative; overflow:hidden;
                             --active-color:#22c55e; --active-glow:rgba(34,197,94,0.45);"
                      onclick="selectProfile(this,'child')">
-                    <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%;
+                    <div style="position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%;
                                 background:#0b0e14; border:1px solid #4b5563;
                                 display:flex; align-items:center; justify-content:center;">
-                        <i class="fa-solid fa-check check-icon" style="color:#22c55e; font-size:9px; opacity:0;"></i>
+                        <i class="fa-solid fa-check check-icon" style="color:#22c55e; font-size:8px; opacity:0;"></i>
                     </div>
                     <img src="icon-aventureiro.png" alt="Aventureiro"
-                         style="width:100px; height:100px; object-fit:contain; margin-bottom:10px;
+                         style="width:88px; height:88px; object-fit:contain; margin-bottom:6px;
                                 filter:drop-shadow(0 0 14px rgba(34,197,94,0.6));"
-                         onerror="this.outerHTML='<div style=\'width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#14532d,#134e4a);margin-bottom:10px;\'></div>';" />
-                    <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Aventureiros</span>
-                    <span style="font-size:10px; color:#86efac; font-weight:700; margin-top:2px;">Heróis da Missão</span>
+                         onerror="this.outerHTML='<div style=\'width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#14532d,#134e4a);margin-bottom:6px;\'></div>';" />
+                    <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:15px;">Aventureiros</span>
+                    <span style="font-size:10px; color:#86efac; font-weight:700; margin-top:1px;">Heróis da Missão</span>
                 </div>
 
             </div>
         </div>
 
         <!-- Login Form Card -->
-        <div id="login_credentials_form" class="glass-panel" style="border-radius:28px; padding:20px 18px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+        <div id="login_credentials_form" class="glass-panel" style="border-radius:24px; padding:16px 16px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
 
             <!-- Decorative corners -->
             <div style="position:absolute;top:0;left:0;width:24px;height:24px;border-top:2px solid #a855f7;border-left:2px solid #a855f7;border-radius:28px 0 0 0;opacity:0.5;"></div>
@@ -233,10 +233,10 @@
             <div style="position:absolute;bottom:0;left:0;width:24px;height:24px;border-bottom:2px solid #a855f7;border-left:2px solid #a855f7;border-radius:0 0 0 28px;opacity:0.5;"></div>
             <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-bottom:2px solid #a855f7;border-right:2px solid #a855f7;border-radius:0 0 28px 0;opacity:0.5;"></div>
 
-            <h3 style="font-family:'Fredoka One',cursive; color:#fff; font-size:18px; margin:0 0 16px;">Acesso Seguro</h3>
+            <h3 style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px; margin:0 0 12px;">Acesso Seguro</h3>
 
             <!-- Email (adult) -->
-            <div id="email-input-group" style="position:relative; margin-bottom:12px;">
+            <div id="email-input-group" style="position:relative; margin-bottom:8px;">
                 <div style="position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#a855f7; opacity:0.75; font-size:14px; pointer-events:none;">
                     <i class="fa-solid fa-user-astronaut"></i>
                 </div>
@@ -244,7 +244,7 @@
             </div>
 
             <!-- Password (adult) -->
-            <div id="password-input-group" style="position:relative; margin-bottom:12px;">
+            <div id="password-input-group" style="position:relative; margin-bottom:8px;">
                 <div style="position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#a855f7; opacity:0.75; font-size:14px; pointer-events:none;">
                     <i class="fa-solid fa-lock"></i>
                 </div>
@@ -266,7 +266,7 @@
             </div>
 
             <!-- Toggle + Forgot -->
-            <div style="display:flex; align-items:center; justify-content:space-between; margin:8px 0 16px; padding:0 2px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin:6px 0 10px; padding:0 2px;">
                 <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="toggleSwitch(this)">
                     <div class="toggle-track on">
                         <div class="toggle-thumb"></div>
@@ -287,7 +287,7 @@
                 INICIAR MISSÃO <i class="fa-solid fa-rocket" style="font-size:14px;"></i>
             </button>
 
-            <p style="text-align:center; margin:14px 0 0; font-size:12px; color:#9ca3af;">
+            <p style="text-align:center; margin:10px 0 0; font-size:12px; color:#9ca3af;">
                 Novo explorador?
                 <a href="#" style="color:#ec4899; font-weight:700; text-decoration:none; text-shadow:0 0 6px rgba(236,72,153,0.6); margin-left:4px;">Criar Base</a>
             </p>
