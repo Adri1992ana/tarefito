@@ -84,8 +84,8 @@
         /* ── PHONE SHELL ── */
         .phone-shell {
             position: relative;
-            width: 375px;
-            height: 812px;
+            width: 360px;
+            height: 800px;
             background: linear-gradient(160deg, #1c1c2e 0%, #0f0f1a 100%);
             border-radius: 52px;
             box-shadow:
@@ -315,14 +315,21 @@
         <div class="phone-screen">
 
             <!-- Logo -->
-            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:24px; margin-top:8px;">
-                <div style="position:relative; display:inline-block;">
-                    <h1 style="font-family:'Fredoka One',cursive; font-size:42px; background: linear-gradient(180deg,#fff 0%,#a855f7 50%,#3b82f6 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 10px rgba(168,85,247,0.7)); margin:0; line-height:1;">TAREFITO</h1>
-                    <div style="position:absolute; inset:-6px; background:rgba(168,85,247,0.15); filter:blur(14px); border-radius:50%; z-index:-1;"></div>
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:16px; margin-top:4px;">
+                <div style="position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <div style="position:absolute; width:160px; height:160px; background:rgba(168,85,247,0.18); filter:blur(36px); border-radius:50%; z-index:0;"></div>
+                    <img src="logo.png" alt="Tarefito"
+                         style="width:160px; height:160px; object-fit:contain; position:relative; z-index:1;
+                                filter:drop-shadow(0 0 22px rgba(168,85,247,0.65)) drop-shadow(0 0 8px rgba(59,130,246,0.4));"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <h1 style="display:none; font-family:'Fredoka One',cursive; font-size:38px;
+                               background:linear-gradient(180deg,#fff 0%,#a855f7 50%,#3b82f6 100%);
+                               -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+                               filter:drop-shadow(0 0 10px rgba(168,85,247,0.7)); margin:0; line-height:1; position:relative; z-index:1;">TAREFITO</h1>
                 </div>
-                <p style="color:rgba(192,132,252,0.75); font-weight:600; letter-spacing:0.04em; font-size:12px; margin:8px 0 0; font-family:'Nunito',sans-serif;">Moldando hábitos. Formando pessoas.</p>
-                <div style="width:60px; height:1px; background:rgba(255,255,255,0.12); margin:8px auto;"></div>
-                <p style="color:rgba(255,255,255,0.2); font-weight:700; letter-spacing:0.22em; font-size:8px; text-transform:uppercase; margin:0; font-family:'Nunito',sans-serif;">Tecnologia com propósito</p>
+                <p style="color:rgba(192,132,252,0.8); font-weight:600; letter-spacing:0.04em; font-size:12px; margin:2px 0 0; font-family:'Nunito',sans-serif;">Moldando hábitos. Formando pessoas.</p>
+                <div style="width:60px; height:1px; background:rgba(255,255,255,0.12); margin:6px auto;"></div>
+                <p style="color:rgba(255,255,255,0.22); font-weight:700; letter-spacing:0.22em; font-size:8px; text-transform:uppercase; margin:0; font-family:'Nunito',sans-serif;">Tecnologia com propósito</p>
             </div>
 
             <!-- Profile Selection -->
@@ -337,9 +344,12 @@
                         <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%; background:#0b0e14; border:1px solid #a855f7; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(168,85,247,0.5);">
                             <i class="fa-solid fa-check check-icon" style="color:#a855f7; font-size:9px; opacity:1;"></i>
                         </div>
-                        <div style="width:68px; height:68px; border-radius:50%; background:linear-gradient(135deg,#581c87,#3730a3); border:3px solid #0b0e14; box-shadow:0 0 14px rgba(168,85,247,0.6); margin-bottom:10px;"></div>
-                        <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Responsável</span>
-                        <span style="font-size:10px; color:#c084fc; font-weight:700; margin-top:2px;">Mestre das Missões</span>
+                        <img src="icon-responsavel.png" alt="Responsável"
+                             style="width:72px; height:72px; object-fit:contain; margin-bottom:8px;
+                                    filter:drop-shadow(0 0 12px rgba(168,85,247,0.7));"
+                             onerror="this.outerHTML='<div style=\'width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#581c87,#3730a3);border:3px solid #0b0e14;box-shadow:0 0 14px rgba(168,85,247,0.6);margin-bottom:10px;\'></div>';" />
+                        <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Responsáveis</span>
+                        <span style="font-size:10px; color:#c084fc; font-weight:700; margin-top:2px;">Mestres das Missões</span>
                     </div>
 
                     <!-- Child -->
@@ -349,9 +359,12 @@
                         <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%; background:#0b0e14; border:1px solid #4b5563; display:flex; align-items:center; justify-content:center;">
                             <i class="fa-solid fa-check check-icon" style="color:#22c55e; font-size:9px; opacity:0;"></i>
                         </div>
-                        <div style="width:68px; height:68px; border-radius:50%; background:linear-gradient(135deg,#14532d,#134e4a); border:3px solid #0b0e14; margin-bottom:10px;"></div>
-                        <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Criança</span>
-                        <span style="font-size:10px; color:#86efac; font-weight:700; margin-top:2px;">Herói/Heroína da Missão</span>
+                        <img src="icon-aventureiro.png" alt="Aventureiro"
+                             style="width:72px; height:72px; object-fit:contain; margin-bottom:8px;
+                                    filter:drop-shadow(0 0 12px rgba(34,197,94,0.6));"
+                             onerror="this.outerHTML='<div style=\'width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#14532d,#134e4a);border:3px solid #0b0e14;margin-bottom:10px;\'></div>';" />
+                        <span style="font-family:'Fredoka One',cursive; color:#fff; font-size:16px;">Aventureiros</span>
+                        <span style="font-size:10px; color:#86efac; font-weight:700; margin-top:2px;">Heróis da Missão</span>
                     </div>
 
                 </div>
