@@ -170,29 +170,105 @@
         </header>
 
         <div class="px-6 py-6 flex flex-col gap-6 flex-1">
-            
+
             <!-- Context Banner -->
             <div class="w-full glass-panel rounded-[20px] p-4 border-l-4 border-neon-blue bg-dark-surface/50 flex items-start gap-3">
-                <i class="fa-solid fa-circle-info text-neon-blue mt-1"></i>
+                <i class="fa-solid fa-circle-info text-neon-blue mt-1 flex-shrink-0"></i>
                 <p class="text-sm text-gray-300 font-bold leading-relaxed">
-                    Gerencie os perfis dos seus filhos. Defina permissões, PINs de acesso e metas iniciais para a aventura de cada um.
+                    Gerencie os perfis dos seus filhos. Veja o painel, passe o celular ou configure o PIN de cada aventureiro.
                 </p>
             </div>
 
             <!-- Children List -->
             <section id="children-list" class="flex flex-col gap-4">
-                <span class="font-display text-lg">Novo Explorador</span>
+
+                <!-- ── Child Card: Lucas ── -->
+                <div class="glass-panel rounded-[20px] overflow-hidden">
+
+                    <!-- Header: avatar + nome + seta tela7 -->
+                    <div class="p-4 flex items-center gap-3">
+                        <div class="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center"
+                             style="background:linear-gradient(135deg,#581c87,#1e3a8a); border:2px solid #a855f7;">
+                            <i class="fa-solid fa-shield-halved text-2xl text-purple-300"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-display text-white text-lg leading-tight">Lucas</p>
+                            <p class="text-xs text-gray-400 font-bold">Nível 4 · Aventureiro ⭐</p>
+                        </div>
+                        <!-- Seta → tela7 (responsável vê o painel da criança) -->
+                        <button onclick="window.location.href='tela7.html'"
+                                class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                style="background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.35);"
+                                title="Ver painel da criança">
+                            <i class="fa-solid fa-chevron-right text-purple-400"></i>
+                        </button>
+                    </div>
+
+                    <!-- Botões de ação -->
+                    <div class="px-4 pb-4 flex gap-2">
+                        <!-- Passar celular para a criança -->
+                        <button onclick="passarCelular('lucas')"
+                                class="btn-gaming flex-1 h-11 rounded-[12px] text-xs font-bold flex items-center justify-center gap-2"
+                                style="background:linear-gradient(90deg,#22c55e,#14b8a6); color:#fff;
+                                       box-shadow:0 0 14px rgba(34,197,94,0.35); border-bottom:3px solid #14532d;">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            Passar Celular
+                        </button>
+                        <!-- Gerenciar criança -->
+                        <button onclick="toggleGerenciar('lucas')" id="btn-gerenciar-lucas"
+                                class="btn-gaming flex-1 h-11 rounded-[12px] text-xs font-bold flex items-center justify-center gap-2"
+                                style="background:rgba(168,85,247,0.12); border:1px solid rgba(168,85,247,0.35); color:#c084fc;">
+                            <i class="fa-solid fa-gear"></i>
+                            Gerenciar
+                        </button>
+                    </div>
+
+                    <!-- Painel de gerenciamento (expansível) -->
+                    <div id="gerenciar-lucas"
+                         class="flex-col gap-3 px-4 pb-4"
+                         style="display:none; border-top:1px solid rgba(255,255,255,0.07);">
+
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pt-3">
+                            <i class="fa-solid fa-key mr-1 text-green-400"></i>Código Secreto (PIN)
+                        </p>
+
+                        <!-- Exibição do PIN -->
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 h-12 rounded-[12px] flex items-center px-4"
+                                 style="background:rgba(11,14,20,0.85); border:2px solid rgba(34,197,94,0.35);">
+                                <span id="pin-lucas"
+                                      class="font-display text-lg tracking-[0.3em] text-green-400"
+                                      data-pin="ABC-1234"
+                                      data-visible="false">●●●-●●●●</span>
+                            </div>
+                            <button onclick="togglePin('lucas')"
+                                    class="w-12 h-12 rounded-[12px] flex items-center justify-center flex-shrink-0"
+                                    style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3);">
+                                <i id="pin-eye-lucas" class="fa-solid fa-eye text-green-400"></i>
+                            </button>
+                        </div>
+
+                        <!-- Gerar novo PIN -->
+                        <button onclick="gerarNovoPin('lucas')"
+                                class="btn-gaming w-full h-10 rounded-[12px] text-xs font-bold flex items-center justify-center gap-2"
+                                style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); color:#60a5fa;">
+                            <i class="fa-solid fa-rotate"></i>
+                            Gerar Novo PIN
+                        </button>
+
+                    </div>
+                </div>
+                <!-- ── /Child Card ── -->
+
+                <!-- Botão adicionar nova criança -->
+                <button type="button"
+                        class="btn-gaming w-full h-14 rounded-[16px] flex items-center justify-center gap-2 text-gray-400"
+                        style="border:2px dashed rgba(255,255,255,0.15); background:rgba(255,255,255,0.03);">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                    <span class="font-display text-base">Novo Explorador</span>
                 </button>
 
             </section>
-
-            <!-- Bottom CTA -->
-            <div class="mt-6">
-                <button type="button" class="btn-gaming w-full h-14 rounded-[16px] bg-gradient-to-r from-neon-purple to-neon-blue text-white font-display text-lg tracking-wider shadow-[0_0_20px_rgba(168,85,247,0.6),inset_0_2px_0_rgba(255,255,255,0.3)] border-b-4 border-purple-900 flex items-center justify-center gap-2">
-                    ACESSAR PAINEL
-                    <i class="fa-solid fa-arrow-right text-sm"></i>
-                </button>
-            </div>
 
         </div>
 
@@ -237,7 +313,41 @@
 
 
   <script>
-    // nav liberada
+    function toggleGerenciar(id) {
+        const panel = document.getElementById('gerenciar-' + id);
+        const btn   = document.getElementById('btn-gerenciar-' + id);
+        const open  = panel.style.display === 'flex';
+        panel.style.display = open ? 'none' : 'flex';
+        panel.style.flexDirection = 'column';
+        btn.style.background    = open ? 'rgba(168,85,247,0.12)' : 'rgba(168,85,247,0.28)';
+        btn.style.borderColor   = open ? 'rgba(168,85,247,0.35)' : '#a855f7';
+    }
+
+    function togglePin(id) {
+        const el      = document.getElementById('pin-' + id);
+        const eye     = document.getElementById('pin-eye-' + id);
+        const visible = el.dataset.visible === 'true';
+        el.textContent    = visible ? '●●●-●●●●' : el.dataset.pin;
+        el.dataset.visible = visible ? 'false' : 'true';
+        eye.className = visible ? 'fa-solid fa-eye text-green-400' : 'fa-solid fa-eye-slash text-green-400';
+    }
+
+    function gerarNovoPin(id) {
+        const C = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        const N = '23456789';
+        const r = a => a[Math.floor(Math.random() * a.length)];
+        const pin = r(C) + r(C) + r(C) + '-' + r(N) + r(N) + r(N) + r(N);
+        const el = document.getElementById('pin-' + id);
+        el.dataset.pin     = pin;
+        el.textContent     = pin;
+        el.dataset.visible = 'true';
+        document.getElementById('pin-eye-' + id).className = 'fa-solid fa-eye-slash text-green-400';
+    }
+
+    function passarCelular(id) {
+        // Vai para o dashboard da criança (modo criança)
+        window.location.href = 'tela7.html';
+    }
   </script>
     <script src="tarefito-supabase.js"></script>
     <script src="tarefito-nav.js"></script>

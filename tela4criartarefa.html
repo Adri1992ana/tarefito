@@ -218,29 +218,31 @@
                                 <label class="relative cursor-pointer shrink-0">
                                     <input type="checkbox" class="peer sr-only radio-gaming" checked />
                                     <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
-                                        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600">
-                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f3cd4b941b-cf7cd1a210a7f38425e3.png" class="w-full h-full object-cover" />
+                                        <div class="w-10 h-10 rounded-full border border-purple-700 flex items-center justify-center"
+                                             style="background:linear-gradient(135deg,#581c87,#1e3a8a);">
+                                            <i class="fa-solid fa-child-reaching text-purple-300 text-lg"></i>
                                         </div>
-                                        <span class="text-[10px] font-bold text-white">—</span>
+                                        <span class="text-[10px] font-bold text-white">Lucas</span>
                                         <div class="absolute top-1 right-1 w-4 h-4 rounded-full bg-neon-blue flex items-center justify-center opacity-0 transform scale-0 transition-all check-icon">
                                             <i class="fa-solid fa-check text-[8px] text-white"></i>
                                         </div>
                                     </div>
                                 </label>
-                                
+
                                 <label class="relative cursor-pointer shrink-0">
                                     <input type="checkbox" class="peer sr-only radio-gaming" />
                                     <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
-                                        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600">
-                                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/94ed3d88cd-c8e46ada3713a3b1bdac.png" class="w-full h-full object-cover" />
+                                        <div class="w-10 h-10 rounded-full border border-green-700 flex items-center justify-center"
+                                             style="background:linear-gradient(135deg,#14532d,#134e4a);">
+                                            <i class="fa-solid fa-child text-green-300 text-lg"></i>
                                         </div>
-                                        <span class="text-[10px] font-bold text-white">—</span>
+                                        <span class="text-[10px] font-bold text-white">Ana</span>
                                         <div class="absolute top-1 right-1 w-4 h-4 rounded-full bg-neon-blue flex items-center justify-center opacity-0 transform scale-0 transition-all check-icon">
                                             <i class="fa-solid fa-check text-[8px] text-white"></i>
                                         </div>
                                     </div>
                                 </label>
-                                
+
                                 <label class="relative cursor-pointer shrink-0">
                                     <input type="checkbox" class="peer sr-only radio-gaming" />
                                     <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
@@ -312,13 +314,24 @@
                         <div class="flex flex-col gap-3">
                             <label class="text-xs font-bold text-gray-400 uppercase tracking-wider flex justify-between items-center">
                                 Estrelas de Recompensa
-                                <span class="text-yellow-400 font-display text-lg">15 <i class="fa-solid fa-star"></i></span>
+                                <span id="stars-display" class="text-yellow-400 font-display text-lg">15 <i class="fa-solid fa-star"></i></span>
                             </label>
-                            <input type="range" min="5" max="50" step="5" value="15" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-yellow-400" />
-                            <div class="flex justify-between text-[10px] text-gray-500 font-bold">
-                                <span>5</span>
-                                <span>25</span>
-                                <span>50</span>
+                            <input id="stars-range" type="range" min="1" max="200" step="1" value="15"
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-yellow-400"
+                                   oninput="syncStars('range', this.value)" />
+                            <div class="flex items-center gap-3">
+                                <div class="flex justify-between text-[10px] text-gray-500 font-bold flex-1">
+                                    <span>1</span>
+                                    <span>100</span>
+                                    <span>200</span>
+                                </div>
+                                <div class="flex items-center gap-1 flex-shrink-0">
+                                    <input id="stars-input" type="number" min="1" max="9999" value="15"
+                                           class="input-gaming w-20 h-9 rounded-lg px-3 text-yellow-400 font-display text-sm text-center"
+                                           style="border-color:rgba(234,179,8,0.4);"
+                                           oninput="syncStars('input', this.value)" />
+                                    <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -379,7 +392,17 @@
 
 
   <script>
-    // nav liberada
+    function syncStars(from, raw) {
+        const val = Math.max(1, parseInt(raw) || 1);
+        document.getElementById('stars-display').innerHTML = val + ' <i class="fa-solid fa-star"></i>';
+        if (from !== 'range') {
+            const clamped = Math.min(val, 200);
+            document.getElementById('stars-range').value = clamped;
+        }
+        if (from !== 'input') {
+            document.getElementById('stars-input').value = val;
+        }
+    }
   </script>
     <script src="tarefito-supabase.js"></script>
     <script src="tarefito-nav.js"></script>
