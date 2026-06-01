@@ -182,83 +182,32 @@
             <!-- Children List -->
             <section id="children-list" class="flex flex-col gap-4">
 
-                <!-- ── Child Card: Lucas ── -->
-                <div class="glass-panel rounded-[20px] overflow-hidden">
-
-                    <!-- Header: avatar + nome + seta tela7 -->
-                    <div class="p-4 flex items-center gap-3">
-                        <div class="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center"
-                             style="background:linear-gradient(135deg,#581c87,#1e3a8a); border:2px solid #a855f7;">
-                            <i class="fa-solid fa-shield-halved text-2xl text-purple-300"></i>
+                <!-- placeholder — substituído pelo JS ao carregar -->
+                <div class="glass-panel rounded-[24px] p-5 border border-gray-700 mb-4">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-900 to-teal-900
+                             border-2 border-neon-green flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
+                            L
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-display text-white text-lg leading-tight">Lucas</p>
-                            <p class="text-xs text-gray-400 font-bold">Nível 4 · Aventureiro ⭐</p>
-                        </div>
-                        <!-- Seta → tela7 (responsável vê o painel da criança) -->
-                        <button onclick="window.location.href='tela7.html'"
-                                class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                style="background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.35);"
-                                title="Ver painel da criança">
-                            <i class="fa-solid fa-chevron-right text-purple-400"></i>
-                        </button>
-                    </div>
-
-                    <!-- Botões de ação -->
-                    <div class="px-4 pb-4 flex gap-2">
-                        <!-- Passar celular para a criança -->
-                        <button onclick="passarCelular('lucas')"
-                                class="btn-gaming flex-1 h-11 rounded-[12px] text-xs font-bold flex items-center justify-center gap-2"
-                                style="background:linear-gradient(90deg,#22c55e,#14b8a6); color:#fff;
-                                       box-shadow:0 0 14px rgba(34,197,94,0.35); border-bottom:3px solid #14532d;">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                            Passar Celular
-                        </button>
-                        <!-- Gerenciar criança -->
-                        <button onclick="toggleGerenciar('lucas')" id="btn-gerenciar-lucas"
-                                class="btn-gaming flex-1 h-11 rounded-[12px] text-xs font-bold flex items-center justify-center gap-2"
-                                style="background:rgba(168,85,247,0.12); border:1px solid rgba(168,85,247,0.35); color:#c084fc;">
-                            <i class="fa-solid fa-gear"></i>
-                            Gerenciar
-                        </button>
-                    </div>
-
-                    <!-- Painel de gerenciamento (expansível) -->
-                    <div id="gerenciar-lucas"
-                         class="flex-col gap-3 px-4 pb-4"
-                         style="display:none; border-top:1px solid rgba(255,255,255,0.07);">
-
-                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pt-3">
-                            <i class="fa-solid fa-key mr-1 text-green-400"></i>Código Secreto (PIN)
-                        </p>
-
-                        <!-- Exibição do PIN -->
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1 h-12 rounded-[12px] flex items-center px-4"
-                                 style="background:rgba(11,14,20,0.85); border:2px solid rgba(34,197,94,0.35);">
-                                <span id="pin-lucas"
-                                      class="font-display text-lg tracking-[0.3em] text-green-400"
-                                      data-pin="ABC-1234"
-                                      data-visible="false">●●●-●●●●</span>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-display text-lg text-white">Lucas</h3>
+                                <i class="fa-solid fa-pen text-gray-600 text-xs"></i>
                             </div>
-                            <button onclick="togglePin('lucas')"
-                                    class="w-12 h-12 rounded-[12px] flex items-center justify-center flex-shrink-0"
-                                    style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3);">
-                                <i id="pin-eye-lucas" class="fa-solid fa-eye text-green-400"></i>
-                            </button>
+                            <span class="text-xs text-gray-400 font-bold">
+                                <i class="fa-solid fa-star text-yellow-400 text-[10px] mr-1"></i>— estrelas
+                            </span>
                         </div>
-
-                        <!-- Gerar novo PIN -->
-                        <button onclick="gerarNovoPin('lucas')"
-                                class="btn-gaming w-full h-10 rounded-[12px] text-xs font-bold flex items-center justify-center gap-2"
-                                style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); color:#60a5fa;">
-                            <i class="fa-solid fa-rotate"></i>
-                            Gerar Novo PIN
-                        </button>
-
+                    </div>
+                    <div class="flex items-center justify-between rounded-xl px-4 py-3"
+                         style="background:rgba(11,14,20,0.65); border:1px solid rgba(34,197,94,0.35);">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-key text-green-400"></i>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">PIN</span>
+                            <span class="font-display text-green-400 text-base tracking-widest">carregando…</span>
+                        </div>
                     </div>
                 </div>
-                <!-- ── /Child Card ── -->
 
                 <!-- Botão adicionar nova criança -->
                 <button type="button"
@@ -312,43 +261,7 @@
     </main>
 
 
-  <script>
-    function toggleGerenciar(id) {
-        const panel = document.getElementById('gerenciar-' + id);
-        const btn   = document.getElementById('btn-gerenciar-' + id);
-        const open  = panel.style.display === 'flex';
-        panel.style.display = open ? 'none' : 'flex';
-        panel.style.flexDirection = 'column';
-        btn.style.background    = open ? 'rgba(168,85,247,0.12)' : 'rgba(168,85,247,0.28)';
-        btn.style.borderColor   = open ? 'rgba(168,85,247,0.35)' : '#a855f7';
-    }
-
-    function togglePin(id) {
-        const el      = document.getElementById('pin-' + id);
-        const eye     = document.getElementById('pin-eye-' + id);
-        const visible = el.dataset.visible === 'true';
-        el.textContent    = visible ? '●●●-●●●●' : el.dataset.pin;
-        el.dataset.visible = visible ? 'false' : 'true';
-        eye.className = visible ? 'fa-solid fa-eye text-green-400' : 'fa-solid fa-eye-slash text-green-400';
-    }
-
-    function gerarNovoPin(id) {
-        const C = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-        const N = '23456789';
-        const r = a => a[Math.floor(Math.random() * a.length)];
-        const pin = r(C) + r(C) + r(C) + '-' + r(N) + r(N) + r(N) + r(N);
-        const el = document.getElementById('pin-' + id);
-        el.dataset.pin     = pin;
-        el.textContent     = pin;
-        el.dataset.visible = 'true';
-        document.getElementById('pin-eye-' + id).className = 'fa-solid fa-eye-slash text-green-400';
-    }
-
-    function passarCelular(id) {
-        // Vai para o dashboard da criança (modo criança)
-        window.location.href = 'tela7.html';
-    }
-  </script>
+  <script>/* lógica movida para tarefito-nav.js */</script>
     <script src="tarefito-supabase.js"></script>
     <script src="tarefito-nav.js"></script>
 </body>

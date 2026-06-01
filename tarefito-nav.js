@@ -243,11 +243,11 @@ async function _loadChildren() {
         div.innerHTML = _childCardHTML(c);
         list.appendChild(div.firstElementChild);
       });
-      list.querySelectorAll('.btn-ver-child').forEach(btn => {
-        btn.addEventListener('click', () => {
-          DB.child.save(JSON.parse(btn.dataset.child));
-          Tarefito.navigate('dashboardCrianca');
-        });
+      list.querySelectorAll('.btn-edit-name').forEach(btn => {
+        btn.addEventListener('click', () => _editChildName(btn.dataset.id, btn.dataset.name));
+      });
+      list.querySelectorAll('.btn-regen-pin').forEach(btn => {
+        btn.addEventListener('click', () => _regenPin(btn.dataset.id));
       });
     }
   } catch(e) { console.error('[loadChildren]', e); }
@@ -264,31 +264,40 @@ async function _loadChildren() {
 }
 
 function _childCardHTML(c) {
-  const safe = JSON.stringify(c).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
-  return `<div class="glass-panel rounded-[24px] p-5 border border-gray-700 relative overflow-hidden group mb-4">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-4">
-        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-900 to-teal-900
-             border-2 border-neon-green shadow-neon-green flex items-center justify-center
-             text-2xl font-bold text-white">${c.name.charAt(0).toUpperCase()}</div>
-        <div>
-          <h3 class="font-display text-lg text-white">${c.name}</h3>
-          <span class="text-xs text-gray-400 font-bold">
-            <i class="fa-solid fa-star text-yellow-400 text-[10px] mr-1"></i>${c.stars || 0} estrelas
-          </span>
+  const initial  = c.name.charAt(0).toUpperCase();
+  const safeName = c.name.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const pin      = c.pin || '—';
+  return `<div class="glass-panel rounded-[24px] p-5 border border-gray-700 relative overflow-hidden mb-4" data-child-id="${c.id}">
+    <!-- Avatar + nome + editar -->
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-900 to-teal-900
+           border-2 border-neon-green shadow-neon-green flex items-center justify-center
+           text-2xl font-bold text-white flex-shrink-0">${initial}</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <h3 class="child-name font-display text-lg text-white">${safeName}</h3>
+          <button class="btn-edit-name text-gray-500 hover:text-neon-purple transition-colors"
+                  data-id="${c.id}" data-name="${safeName}" title="Editar nome">
+            <i class="fa-solid fa-pen text-xs"></i>
+          </button>
         </div>
+        <span class="text-xs text-gray-400 font-bold">
+          <i class="fa-solid fa-star text-yellow-400 text-[10px] mr-1"></i>${c.stars || 0} estrelas
+        </span>
       </div>
-      <button class="btn-ver-child w-9 h-9 rounded-xl bg-dark-surface border border-gray-700
-              text-gray-400 hover:text-white hover:border-neon-purple flex items-center justify-center"
-              data-child='${safe}'>
-        <i class="fa-solid fa-arrow-right text-sm"></i>
-      </button>
     </div>
-    <div class="flex items-center justify-between text-sm text-gray-400">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-${c.pin ? 'lock' : 'unlock-keyhole'}"></i>
-        <span>PIN: ${c.pin ? '••••' : 'Não configurado'}</span>
+    <!-- PIN sempre visível -->
+    <div class="flex items-center justify-between rounded-xl px-4 py-3"
+         style="background:rgba(11,14,20,0.65); border:1px solid rgba(34,197,94,0.35);">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-key text-green-400"></i>
+        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">PIN</span>
+        <span class="font-display text-green-400 text-base tracking-widest">${pin}</span>
       </div>
+      <button class="btn-regen-pin text-gray-500 hover:text-blue-400 transition-colors"
+              data-id="${c.id}" title="Gerar novo PIN">
+        <i class="fa-solid fa-rotate text-sm"></i>
+      </button>
     </div>
   </div>`;
 }
@@ -845,6 +854,53 @@ function _loadChildProfile(child) {
   const statEls = document.querySelectorAll('#stats-grid .font-display.text-2xl, #stats-grid .text-2xl');
   const vals = [child.stars||0, '—', child.total_stars_earned||child.stars||0, 0];
   statEls.forEach((el, i) => { if (vals[i] !== undefined) el.textContent = vals[i]; });
+}
+
+async function _editChildName(childId, currentName) {
+  const card = document.querySelector(`[data-child-id="${childId}"]`);
+  if (!card) return;
+
+  const nameEl  = card.querySelector('.child-name');
+  const editBtn = card.querySelector('.btn-edit-name');
+
+  const input = document.createElement('input');
+  input.type  = 'text';
+  input.value = currentName;
+  input.style.cssText = 'background:rgba(11,14,20,0.8);border:1px solid #a855f7;border-radius:8px;' +
+    'padding:2px 10px;color:#fff;font-family:"Fredoka One",cursive;font-size:18px;width:150px;outline:none;';
+
+  const okBtn = document.createElement('button');
+  okBtn.innerHTML  = '<i class="fa-solid fa-check"></i>';
+  okBtn.style.cssText = 'color:#22c55e;margin-left:4px;background:none;border:none;cursor:pointer;font-size:14px;';
+
+  nameEl.replaceWith(input);
+  editBtn.replaceWith(okBtn);
+  input.focus(); input.select();
+
+  const save = async () => {
+    const newName = input.value.trim();
+    if (!newName) return;
+    try {
+      await DB.updateChild(childId, { name: newName });
+      _toast('Nome atualizado!', 'ok');
+    } catch(e) { _toast('Erro ao salvar nome', 'err'); }
+    await _loadChildren();
+  };
+
+  okBtn.addEventListener('click', save);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  save();
+    if (e.key === 'Escape') _loadChildren();
+  });
+}
+
+async function _regenPin(childId) {
+  const pin = _generatePin();
+  try {
+    await DB.updateChild(childId, { pin });
+    _toast('Novo PIN: ' + pin, 'ok');
+    await _loadChildren();
+  } catch(e) { _toast('Erro ao gerar PIN', 'err'); }
 }
 
 // ════════════════════════════════════════════════════════════
