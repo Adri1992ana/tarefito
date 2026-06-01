@@ -142,15 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       _onBtnText('Criar Missão',   () => Tarefito.navigate('criarTarefa'));
       _onBtnText('Recompensas',    () => Tarefito.navigate('gerenciarLoja'));
       _onBtnText('Trocar Criança', () => Tarefito.navigate('gerenciarCriancas'));
-      _onBtnText('Ver Todos',      () => Tarefito.navigate('aprovarTarefa'));
-      // Botão "Aprovar" — o que tem badge de número
-      document.querySelectorAll('button').forEach(btn => {
-        if (/^\d+$/.test(btn.textContent.trim()) || btn.querySelector('.rounded-full')) return;
-        const txt = btn.textContent.trim();
-        if (txt && !txt.includes('Criar') && !txt.includes('Recompensa') && !txt.includes('Trocar')) {
-          // Pode ser o botão de aprovação — não adicionar listener duplo
-        }
-      });
+      _onBtnText('Aprovar',        () => Tarefito.navigate('aprovarTarefa'));
       _bindBackBtn();
       _bindBottomNav();
       break;
