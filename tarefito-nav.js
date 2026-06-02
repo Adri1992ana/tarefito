@@ -541,7 +541,16 @@ async function _loadPendingTasks() {
   if (!queue) return;
 
   try {
-    const tasks = await DB.getPendingApproval(parentId);
+    const [tasks, approved] = await Promise.all([
+      DB.getPendingApproval(parentId),
+      db.get('tasks', 'parent_id=eq.' + parentId + '&status=eq.approved&select=id').catch(() => []),
+    ]);
+
+    // Atualiza contadores pelos IDs
+    const elPend = document.getElementById('count-pendentes');
+    const elApro = document.getElementById('count-aprovadas');
+    if (elPend) elPend.textContent = tasks?.length ?? 0;
+    if (elApro) elApro.textContent = approved?.length ?? 0;
 
     // Limpa cards mockados
     queue.innerHTML = '';
@@ -553,11 +562,6 @@ async function _loadPendingTasks() {
       </div>`;
       return;
     }
-
-    // Atualiza contador no stats-summary
-    document.querySelectorAll('#stats-summary .font-display').forEach((el, i) => {
-      if (i === 0) el.textContent = tasks.length;
-    });
 
     tasks.forEach(t => {
       const div = document.createElement('div');

@@ -197,41 +197,23 @@
                         <div class="w-10 h-10 rounded-full bg-dark-bg border border-neon-blue/50 flex items-center justify-center">
                             <i class="fa-solid fa-hourglass-half text-neon-blue text-lg"></i>
                         </div>
-                        <span class="font-display text-2xl text-white">0</span>
+                        <span id="count-pendentes" class="font-display text-2xl text-white">—</span>
                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pendentes</span>
                     </div>
-                    
+
                     <div class="glass-panel rounded-[20px] p-4 border border-neon-green/30 relative overflow-hidden flex flex-col items-center justify-center gap-2">
                         <div class="absolute top-0 right-0 w-16 h-16 bg-neon-green opacity-10 blur-[20px] rounded-full"></div>
                         <div class="w-10 h-10 rounded-full bg-dark-bg border border-neon-green/50 flex items-center justify-center">
                             <i class="fa-solid fa-check-double text-neon-green text-lg"></i>
                         </div>
-                        <span class="font-display text-2xl text-white">0</span>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aprovadas Hoje</span>
+                        <span id="count-aprovadas" class="font-display text-2xl text-white">—</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aprovadas</span>
                     </div>
-                </div>
-            </section>
-
-            <!-- Filters -->
-            <section id="filters" class="flex flex-col gap-3">
-                <div class="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide">
-                    <button class="shrink-0 h-10 px-4 rounded-xl border-2 border-neon-purple bg-neon-purple/20 text-white font-bold text-xs flex items-center gap-2 shadow-neon-purple">
-                        <i class="fa-solid fa-layer-group"></i> Todos
-                    </button>
-                    <button class="shrink-0 h-10 px-4 rounded-xl border border-gray-700 bg-dark-surface text-gray-400 font-bold text-xs flex items-center gap-2 hover:border-gray-500 transition-colors">
-                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f3cd4b941b-cf7cd1a210a7f38425e3.png" class="w-5 h-5 rounded-full object-cover" /> —
-                    </button>
-                    <button class="shrink-0 h-10 px-4 rounded-xl border border-gray-700 bg-dark-surface text-gray-400 font-bold text-xs flex items-center gap-2 hover:border-gray-500 transition-colors">
-                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/94ed3d88cd-c8e46ada3713a3b1bdac.png" class="w-5 h-5 rounded-full object-cover" /> —
-                    </button>
                 </div>
             </section>
 
             <!-- Pending Approval Queue -->
             <section id="approval-queue" class="flex flex-col gap-4">
-                
-                </div>
-
             </section>
 
             <!-- Decision History & Analytics -->
