@@ -543,7 +543,7 @@ async function _loadPendingTasks() {
   try {
     const [tasks, approved] = await Promise.all([
       DB.getPendingApproval(parentId),
-      db.get('tasks', 'parent_id=eq.' + parentId + '&status=eq.approved&select=id').catch(() => []),
+      DB.getApprovedCount(parentId).catch(() => []),
     ]);
 
     // Atualiza contadores pelos IDs
