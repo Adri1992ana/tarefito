@@ -158,16 +158,19 @@ const DB = {
     return db.patch('tasks', { done: status === 'approved' }, 'id=eq.' + taskId);
   },
   async getPendingApproval(parentId) {
-    // Tarefas submetidas pela criança: done=false E evidence_note preenchido
     return db.get('tasks',
       'parent_id=eq.' + parentId +
       '&done=eq.false' +
-      '&evidence_note=not.is.null' +
-      '&select=*,members(name)'
+      '&select=*,members(name)' +
+      '&order=created_at.desc'
     );
   },
   async getApprovedCount(parentId) {
-    return db.get('tasks', 'parent_id=eq.' + parentId + '&done=eq.true&select=id');
+    return db.get('tasks',
+      'parent_id=eq.' + parentId +
+      '&done=eq.true' +
+      '&select=id'
+    );
   },
 
   // ── Rewards ──

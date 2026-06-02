@@ -546,16 +546,28 @@ async function _loadPendingTasks() {
       DB.getApprovedCount(parentId).catch(() => []),
     ]);
 
-    // Atualiza contadores pelos IDs
+    const pendCount = tasks?.length  ?? 0;
+    const aprvCount = approved?.length ?? 0;
+
+    // Cards de contagem
     const elPend = document.getElementById('count-pendentes');
     const elApro = document.getElementById('count-aprovadas');
-    if (elPend) elPend.textContent = tasks?.length ?? 0;
-    if (elApro) elApro.textContent = approved?.length ?? 0;
+    if (elPend) elPend.textContent = pendCount;
+    if (elApro) elApro.textContent = aprvCount;
 
-    // Limpa cards mockados
+    // Subtítulo dinâmico
+    const elSub = document.getElementById('subtitle-pendentes');
+    if (elSub) {
+      elSub.textContent = pendCount === 0
+        ? 'Nenhuma missão aguardando'
+        : pendCount === 1 ? '1 missão aguardando revisão'
+        : pendCount + ' missões aguardando revisão';
+    }
+
+    // Limpa fila e renderiza
     queue.innerHTML = '';
 
-    if (!tasks?.length) {
+    if (!pendCount) {
       queue.innerHTML = `<div class="glass-panel rounded-[24px] p-8 border border-gray-700 text-center">
         <i class="fa-solid fa-check-double text-neon-green text-3xl mb-3 block"></i>
         <p class="text-white font-display">Tudo em dia! Nenhuma missão pendente.</p>
