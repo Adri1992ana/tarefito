@@ -161,7 +161,7 @@ const DB = {
     return db.get('tasks',
       'parent_id=eq.' + parentId +
       '&done=eq.false' +
-      '&select=*,members(name)' +
+      '&select=*' +
       '&order=created_at.desc'
     );
   },

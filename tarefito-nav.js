@@ -541,10 +541,15 @@ async function _loadPendingTasks() {
   if (!queue) return;
 
   try {
-    const [tasks, approved] = await Promise.all([
+    const [tasks, approved, children] = await Promise.all([
       DB.getPendingApproval(parentId),
       DB.getApprovedCount(parentId).catch(() => []),
+      DB.getChildren(parentId).catch(() => []),
     ]);
+
+    // mapa child_id → nome para uso nos cards
+    const childMap = {};
+    (children || []).forEach(c => { childMap[c.id] = c.name; });
 
     const pendCount = tasks?.length  ?? 0;
     const aprvCount = approved?.length ?? 0;
@@ -582,7 +587,7 @@ async function _loadPendingTasks() {
         <div class="flex justify-between items-start">
           <div>
             <p class="font-display text-base text-white">${t.name}</p>
-            <span class="text-xs text-gray-400">${t.members?.name || 'Criança'}</span>
+            <span class="text-xs text-gray-400">${childMap[t.child_id] || 'Aventureiro'}</span>
           </div>
           <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
             <span class="text-xs font-display text-yellow-400">${t.stars}</span>
