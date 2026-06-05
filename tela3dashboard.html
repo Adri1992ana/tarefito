@@ -188,9 +188,7 @@
                     </div>
                     
                     <div class="flex-1 glass-panel rounded-[24px] p-5 border border-neon-pink/30 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-neon-pink opacity-10 blur-[30px] rounded-full"></div>
-                        <div class="absolute top-3 right-3 w-2 h-2 rounded-full bg-neon-pink animate-ping"></div>
-                        <div class="flex items-center gap-3 mb-2">
+                            <div class="flex items-center gap-3 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-dark-bg border border-neon-pink/50 flex items-center justify-center">
                                 <i class="fa-solid fa-bell text-neon-pink text-sm"></i>
                             </div>
@@ -213,12 +211,11 @@
                         </div>
                         <span class="text-xs font-bold text-gray-300">Criar Missão</span>
                     </button>
-                    <button class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-pink hover:bg-neon-pink/5 transition-all group relative">
-                        <div class="absolute top-2 right-2 w-4 h-4 rounded-full bg-neon-pink text-[9px] font-bold text-white flex items-center justify-center">0</div>
+                    <button id="btn-aprovar" class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-pink hover:bg-neon-pink/5 transition-all group relative">
                         <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-neon-pink group-hover:shadow-neon-pink transition-all">
                             <i class="fa-solid fa-check-double text-neon-pink text-lg"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-300">Aprovar</span>
+                        <span id="badge-aprovar" class="text-xs font-bold text-gray-300">Aprovar</span>
                     </button>
                     <button class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-yellow-400 hover:bg-yellow-400/5 transition-all group">
                         <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-yellow-400 group-hover:shadow-[0_0_15px_rgba(250,204,21,0.5)] transition-all">
@@ -226,11 +223,13 @@
                         </div>
                         <span class="text-xs font-bold text-gray-300">Recompensas</span>
                     </button>
-                    <button class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-purple hover:bg-neon-purple/5 transition-all group">
+                    <button id="btn-filhos" class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-purple hover:bg-neon-purple/5 transition-all group">
                         <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-neon-purple group-hover:shadow-neon-purple transition-all">
                             <i class="fa-solid fa-users text-neon-purple text-lg"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-300">Trocar Criança</span>
+                        <span class="text-xs font-bold text-gray-300">Filhos
+                            <span id="badge-filhos" class="ml-1 text-neon-purple"></span>
+                        </span>
                     </button>
                 </div>
             </section>

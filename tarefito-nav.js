@@ -429,16 +429,29 @@ async function _loadDashboard() {
     ]);
     const totalStars = (children||[]).reduce((s,c) => s+(c.stars||0), 0);
 
-    // Stats cards — atualiza os números grandes
+    // Stats cards — estrelas e pendentes
     const statNums = document.querySelectorAll('#global-stats .font-display');
     if (statNums[0]) statNums[0].textContent = totalStars;
     if (statNums[1]) statNums[1].textContent = pending?.length || 0;
 
-    // Badge do botão aprovar
-    document.querySelectorAll('#quick-actions button').forEach(btn => {
-      const badge = btn.querySelector('.rounded-full, .absolute');
-      if (badge && pending?.length) badge.textContent = pending.length;
-    });
+    // Badge do botão Aprovar (só esse botão, pelo ID)
+    const badgeAprovar = document.getElementById('badge-aprovar');
+    if (badgeAprovar && pending?.length) {
+      badgeAprovar.textContent = 'Aprovar (' + pending.length + ')';
+    }
+
+    // Contador de filhos no botão Filhos
+    const badgeFilhos = document.getElementById('badge-filhos');
+    if (badgeFilhos) {
+      badgeFilhos.textContent = children?.length ? '(' + children.length + ')' : '';
+    }
+
+    // Navegação do botão Filhos para tela2
+    const btnFilhos = document.getElementById('btn-filhos');
+    if (btnFilhos && !btnFilhos._navBound) {
+      btnFilhos._navBound = true;
+      btnFilhos.addEventListener('click', () => Tarefito.navigate('gerenciarCriancas'));
+    }
 
     // Progresso de crianças
     const progressSection = document.getElementById('child-progress');
