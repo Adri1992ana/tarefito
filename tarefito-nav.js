@@ -453,18 +453,48 @@ async function _loadDashboard() {
       btnFilhos.addEventListener('click', () => Tarefito.navigate('gerenciarCriancas'));
     }
 
-    // Progresso de crianças
+    // Progresso de crianças — gera cards dinamicamente
     const progressSection = document.getElementById('child-progress');
-    if (progressSection && children?.length) {
-      const items = progressSection.querySelectorAll('.flex.items-center.justify-between');
-      children.forEach((child, i) => {
-        if (items[i]) {
-          const nameEl = items[i].querySelector('.font-bold, .font-display');
-          const starEl = items[i].querySelector('.text-yellow-400');
-          if (nameEl) nameEl.textContent = child.name;
-          if (starEl) starEl.textContent = child.stars || 0;
-        }
-      });
+    if (progressSection) {
+      // mantém só o h3
+      const h3 = progressSection.querySelector('h3');
+      progressSection.innerHTML = '';
+      if (h3) progressSection.appendChild(h3);
+
+      if (!children?.length) {
+        const empty = document.createElement('p');
+        empty.className = 'text-gray-500 text-sm text-center py-4';
+        empty.textContent = 'Nenhum aventureiro cadastrado ainda.';
+        progressSection.appendChild(empty);
+      } else {
+        children.forEach(child => {
+          const goal  = child.weekly_goal || 50;
+          const stars = child.stars || 0;
+          const pct   = Math.min(100, Math.round((stars / goal) * 100));
+          const initial = child.name.charAt(0).toUpperCase();
+
+          const card = document.createElement('div');
+          card.className = 'glass-panel rounded-[20px] p-4 border border-gray-700 flex items-center gap-4';
+          card.innerHTML = `
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-900 to-teal-900
+                 border-2 border-neon-green flex items-center justify-center
+                 text-lg font-bold text-white flex-shrink-0">${initial}</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-display text-sm text-white">${child.name}</span>
+                <span class="text-xs font-bold text-yellow-400 flex items-center gap-1">
+                  ${stars} <i class="fa-solid fa-star text-[10px]"></i>
+                </span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-dark-bg overflow-hidden">
+                <div class="h-full rounded-full bg-gradient-to-r from-neon-green to-neon-blue transition-all"
+                     style="width:${pct}%"></div>
+              </div>
+              <span class="text-[10px] text-gray-500 font-bold mt-1 block">${pct}% da meta semanal (${goal}⭐)</span>
+            </div>`;
+          progressSection.appendChild(card);
+        });
+      }
     }
   } catch(e) { console.error('[dashboard]', e); }
 }
