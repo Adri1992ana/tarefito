@@ -660,7 +660,6 @@ async function _loadRewardsAdmin() {
         </div>
         <div class="flex flex-col flex-1">
           <span class="font-display text-sm text-white">${r.name}</span>
-          <span class="text-[10px] text-gray-400">${r.type||'Digital'} · Estoque: ${r.stock??'∞'}</span>
         </div>
         <div class="flex flex-col items-end gap-2">
           <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
@@ -684,27 +683,20 @@ async function _loadRewardsAdmin() {
 async function _submitReward() {
   const family = DB.family.get();
   if (!family) return;
-  const nameEl  = document.querySelector('#reward-creation-form input[type="text"]');
-  const costEl  = document.querySelector('#reward-creation-form input[type="number"]:first-of-type, #reward-creation-form input[placeholder="50"]');
-  const stockEl = document.querySelector('#reward-creation-form input[placeholder="∞"]');
-  const typeEl  = document.querySelector('[name="reward_type"]:checked')?.closest('label')?.querySelector('span');
-  const rarEl   = document.querySelector('[name="rarity"]:checked')?.closest('label')?.querySelector('span');
+  const nameEl = document.querySelector('#reward-creation-form input[type="text"]');
+  const costEl = document.querySelector('#reward-creation-form input[type="number"], #reward-creation-form input[placeholder="50"]');
 
-  const name  = nameEl?.value?.trim();
-  const cost  = parseInt(costEl?.value);
-  const stock = stockEl?.value ? parseInt(stockEl.value) : null;
-  const type  = typeEl?.textContent?.trim() || 'Digital';
-  const rarity = rarEl?.textContent?.trim() || 'Comum';
+  const name = nameEl?.value?.trim();
+  const cost = parseInt(costEl?.value);
 
   if (!name) return _toast('Digite o nome do prêmio!', 'err');
   if (!cost || cost < 1) return _toast('Defina o custo em estrelas!', 'err');
 
   try {
-    await DB.createReward(family.id, { name, cost, stock, type, rarity });
+    await DB.createReward(family.id, { name, cost });
     _toast('"' + name + '" adicionado! 🎁', 'ok');
     if (nameEl) nameEl.value = '';
     if (costEl) costEl.value = '';
-    if (stockEl) stockEl.value = '';
     await _loadRewardsAdmin();
   } catch(e) { _toast('Erro: ' + (e?.message || JSON.stringify(e)), 'err'); }
 }
@@ -817,17 +809,14 @@ async function _loadShop(child) {
     const grid = document.querySelector('#reward-catalog .grid');
     if (!grid || !rewards?.length) return;
 
-    const rcMap = { Comum:'neon-green', Raro:'neon-blue', Épico:'neon-purple', Lendário:'neon-cyan' };
     grid.innerHTML = rewards.map(r => {
       const can = (child.stars||0) >= r.cost;
-      const rc  = rcMap[r.rarity] || 'neon-green';
       return `
-        <div class="glass-panel rounded-[20px] p-3 border border-${rc}/30 flex flex-col gap-3">
+        <div class="glass-panel rounded-[20px] p-3 border border-neon-purple/30 flex flex-col gap-3">
           <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center">
-            <i class="fa-solid fa-gift text-${rc} text-3xl"></i>
+            <i class="fa-solid fa-gift text-neon-purple text-3xl"></i>
           </div>
           <div class="flex flex-col gap-1">
-            <span class="text-[9px] font-bold text-${rc} uppercase">${r.rarity||'Comum'}</span>
             <h3 class="font-display text-sm text-white truncate">${r.name}</h3>
             <div class="flex items-center gap-1">
               <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
@@ -835,7 +824,7 @@ async function _loadShop(child) {
             </div>
           </div>
           <button class="btn-resgatar w-full py-2 rounded-lg text-[10px] font-bold uppercase transition-all
-            ${can ? 'bg-dark-surface border border-'+rc+'/50 text-'+rc+' hover:bg-'+rc+'/20'
+            ${can ? 'bg-dark-surface border border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20'
                   : 'bg-dark-surface border border-gray-600 text-gray-400 cursor-not-allowed opacity-60'}"
             data-id="${r.id}" data-name="${r.name}" data-cost="${r.cost}"
             ${can ? '' : 'disabled'}>
