@@ -655,21 +655,25 @@ async function _loadRewardsAdmin() {
       div.className = 'glass-panel rounded-2xl p-3 border border-neon-purple/30 flex items-center gap-3 relative overflow-hidden mb-3';
       div.innerHTML = `
         <div class="absolute left-0 top-0 w-1 h-full bg-neon-purple"></div>
-        <div class="w-14 h-14 rounded-xl bg-dark-bg border border-neon-purple/50 flex items-center justify-center">
+        <div class="w-14 h-14 rounded-xl bg-dark-bg border border-neon-purple/50 flex items-center justify-center flex-shrink-0">
           <i class="fa-solid fa-gift text-neon-purple text-xl"></i>
         </div>
-        <div class="flex flex-col flex-1">
-          <span class="font-display text-sm text-white">${r.name}</span>
-        </div>
-        <div class="flex flex-col items-end gap-2">
-          <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
-            <span class="text-xs font-display text-yellow-400">${r.cost}</span>
+        <div class="flex flex-col flex-1 min-w-0">
+          <span class="font-display text-sm text-white truncate">${r.name}</span>
+          <div class="flex items-center gap-1 mt-1">
             <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+            <span class="text-xs font-display text-yellow-400">${r.cost}</span>
           </div>
-          <button class="btn-del text-gray-500 hover:text-neon-pink transition-colors" data-id="${r.id}">
-            <i class="fa-solid fa-trash-can text-xs"></i>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <button class="btn-edit text-gray-400 hover:text-neon-purple transition-colors" title="Editar">
+            <i class="fa-solid fa-pen text-sm"></i>
+          </button>
+          <button class="btn-del text-gray-400 hover:text-neon-pink transition-colors" title="Excluir">
+            <i class="fa-solid fa-trash-can text-sm"></i>
           </button>
         </div>`;
+      div.querySelector('.btn-edit').addEventListener('click', () => _editReward(r));
       div.querySelector('.btn-del').addEventListener('click', async () => {
         if (!confirm('Remover "' + r.name + '"?')) return;
         await DB.deleteReward(r.id);
@@ -911,6 +915,82 @@ async function _regenPin(childId) {
     _toast('Novo PIN: ' + pin, 'ok');
     await _loadChildren();
   } catch(e) { _toast('Erro ao gerar PIN', 'err'); }
+}
+
+function _editReward(r) {
+  const existing = document.getElementById('tf-edit-reward-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'tf-edit-reward-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;' +
+    'display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  modal.innerHTML = `
+    <div style="background:#13131a;border:1px solid rgba(168,85,247,0.4);border-radius:24px;
+                padding:28px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(168,85,247,0.2);">
+      <h2 style="color:#fff;font-family:'Fredoka One',sans-serif;font-size:20px;margin:0 0 20px;display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-pen" style="color:#a855f7;font-size:16px;"></i> Editar Prêmio
+      </h2>
+
+      <label style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+        Nome do Prêmio
+      </label>
+      <input id="tf-edit-name" type="text" value="${r.name.replace(/"/g,'&quot;')}"
+        style="width:100%;height:48px;background:#1e1e2e;border:2px solid #374151;border-radius:12px;
+               padding:0 16px;color:#fff;font-weight:700;font-size:15px;margin:8px 0 16px;box-sizing:border-box;" />
+
+      <label style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">
+        Custo em Estrelas
+      </label>
+      <div style="position:relative;margin:8px 0 24px;">
+        <i class="fa-solid fa-star" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#facc15;font-size:13px;"></i>
+        <input id="tf-edit-cost" type="number" value="${r.cost}"
+          style="width:100%;height:48px;background:#1e1e2e;border:2px solid #374151;border-radius:12px;
+                 padding:0 16px 0 40px;color:#fff;font-weight:700;font-size:15px;box-sizing:border-box;" />
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button id="tf-edit-cancel"
+          style="flex:1;height:48px;border-radius:14px;border:2px solid #374151;
+                 background:transparent;color:#9ca3af;font-weight:700;cursor:pointer;font-size:14px;">
+          Cancelar
+        </button>
+        <button id="tf-edit-save"
+          style="flex:2;height:48px;border-radius:14px;border:none;
+                 background:linear-gradient(90deg,#a855f7,#3b82f6);color:#fff;
+                 font-family:'Fredoka One',sans-serif;font-size:16px;cursor:pointer;
+                 box-shadow:0 0 20px rgba(168,85,247,0.4);">
+          Salvar Alterações
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  document.getElementById('tf-edit-name').focus();
+
+  document.getElementById('tf-edit-cancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  document.getElementById('tf-edit-save').addEventListener('click', async () => {
+    const name = document.getElementById('tf-edit-name').value.trim();
+    const cost = parseInt(document.getElementById('tf-edit-cost').value);
+    if (!name) return;
+    if (!cost || cost < 1) return _toast('Custo inválido', 'err');
+    const saveBtn = document.getElementById('tf-edit-save');
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    saveBtn.disabled = true;
+    try {
+      await DB.updateReward(r.id, { name, cost });
+      modal.remove();
+      _toast('"' + name + '" atualizado! ✏️', 'ok');
+      await _loadRewardsAdmin();
+    } catch(e) {
+      saveBtn.innerHTML = 'Salvar Alterações';
+      saveBtn.disabled = false;
+      _toast('Erro: ' + (e?.message || JSON.stringify(e)), 'err');
+    }
+  });
 }
 
 // ════════════════════════════════════════════════════════════

@@ -180,6 +180,9 @@ const DB = {
   async createReward(parentId, data) {
     return db.post('rewards', Object.assign({ parent_id: parentId }, data));
   },
+  async updateReward(rewardId, updates) {
+    return db.patch('rewards', updates, 'id=eq.' + rewardId);
+  },
   async deleteReward(rewardId) {
     return db.delete('rewards', 'id=eq.' + rewardId);
   },
