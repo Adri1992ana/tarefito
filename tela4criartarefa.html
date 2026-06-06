@@ -182,7 +182,21 @@
         </header>
 
         <div class="px-6 py-6 flex flex-col gap-6 flex-1">
-            
+
+            <!-- Biblioteca de Missões -->
+            <section id="task-library" class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-display text-lg text-white flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-neon-cyan text-base"></i> Biblioteca de Missões
+                    </h2>
+                    <button id="btn-add-template" onclick="addTemplate()"
+                            class="text-xs font-bold text-neon-purple flex items-center gap-1 hover:opacity-75 transition-opacity">
+                        <i class="fa-solid fa-plus text-xs"></i> Nova
+                    </button>
+                </div>
+                <div id="template-list" class="flex flex-col gap-2"></div>
+            </section>
+
             <!-- Mission Basics Form -->
             <section id="mission-basics" class="flex flex-col gap-4">
                 <div class="glass-panel rounded-[24px] p-5 border border-neon-purple/30 relative overflow-hidden">
@@ -214,7 +228,7 @@
                     <div class="flex flex-col gap-5">
                         <div class="flex flex-col gap-3">
                             <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quem vai fazer?</label>
-                            <div class="flex flex-wrap gap-3">
+                            <div id="child-checkboxes" class="flex flex-row flex-wrap gap-3">
                                 <label class="relative cursor-pointer">
                                     <input type="checkbox" class="peer sr-only radio-gaming" checked />
                                     <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface flex flex-col items-center justify-center gap-2 transition-all">
@@ -392,6 +406,114 @@
 
 
   <script>
+    // ── Biblioteca de templates ───────────────────────────────
+    const LIBRARY_KEY = 'tf_task_library';
+
+    const DEFAULT_TEMPLATES = [
+      { id: 1, name: 'Arrumar o quarto',                  stars: 5 },
+      { id: 2, name: 'Arrumar os brinquedos',             stars: 4 },
+      { id: 3, name: 'Fazer a lição de casa',             stars: 2 },
+      { id: 4, name: 'Cuidar do pet',                     stars: 3 },
+      { id: 5, name: 'Ler 2 páginas do livro combinado',  stars: 4 },
+      { id: 6, name: 'Ajudar a preparar a janta',         stars: 2 },
+      { id: 7, name: 'Escovar os dentes',                 stars: 2 },
+      { id: 8, name: 'Varrer a garagem',                  stars: 2 },
+      { id: 9, name: 'Secar a louça',                     stars: 3 },
+    ];
+
+    function loadTemplates() {
+      try { return JSON.parse(localStorage.getItem(LIBRARY_KEY)) || DEFAULT_TEMPLATES; }
+      catch { return DEFAULT_TEMPLATES; }
+    }
+    function saveTemplates(list) {
+      localStorage.setItem(LIBRARY_KEY, JSON.stringify(list));
+    }
+
+    function renderLibrary() {
+      const list = loadTemplates();
+      const container = document.getElementById('template-list');
+      container.innerHTML = '';
+      list.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'glass-panel rounded-[16px] px-4 py-3 border border-neon-cyan/25 flex items-center gap-3';
+        row.innerHTML = `
+          <button onclick="applyTemplate(${t.id})"
+                  class="flex-1 text-left flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-lg bg-dark-bg border border-neon-cyan/40 flex items-center justify-center flex-shrink-0 group-hover:border-neon-cyan transition-colors">
+              <i class="fa-solid fa-bolt text-neon-cyan text-xs"></i>
+            </div>
+            <span class="font-display text-sm text-white group-hover:text-neon-cyan transition-colors truncate">${t.name}</span>
+          </button>
+          <div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-dark-bg border border-yellow-400/30 flex-shrink-0">
+            <input type="number" value="${t.stars}" min="1" max="9999"
+                   onchange="updateTemplateStars(${t.id}, this.value)"
+                   onclick="event.stopPropagation()"
+                   class="w-10 bg-transparent text-yellow-400 font-display text-sm text-center outline-none" />
+            <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+          </div>
+          <input type="text" value="${t.name}"
+                 onchange="updateTemplateName(${t.id}, this.value)"
+                 onclick="event.stopPropagation()"
+                 style="position:absolute;opacity:0;pointer-events:none;" />
+          <button onclick="editTemplateName(${t.id})"
+                  class="text-gray-600 hover:text-neon-purple transition-colors flex-shrink-0" title="Editar nome">
+            <i class="fa-solid fa-pen text-xs"></i>
+          </button>
+          <button onclick="deleteTemplate(${t.id})"
+                  class="text-gray-600 hover:text-neon-pink transition-colors flex-shrink-0" title="Remover">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>`;
+        container.appendChild(row);
+      });
+    }
+
+    function applyTemplate(id) {
+      const t = loadTemplates().find(x => x.id === id);
+      if (!t) return;
+      const titleInput = document.querySelector('#mission-basics input[type="text"]');
+      if (titleInput) titleInput.value = t.name;
+      syncStars('input', t.stars);
+      titleInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      titleInput?.focus();
+    }
+
+    function updateTemplateStars(id, val) {
+      const list = loadTemplates();
+      const t = list.find(x => x.id === id);
+      if (t) { t.stars = Math.max(1, parseInt(val) || 1); saveTemplates(list); }
+    }
+
+    function updateTemplateName(id, val) {
+      const list = loadTemplates();
+      const t = list.find(x => x.id === id);
+      if (t && val.trim()) { t.name = val.trim(); saveTemplates(list); renderLibrary(); }
+    }
+
+    function editTemplateName(id) {
+      const t = loadTemplates().find(x => x.id === id);
+      if (!t) return;
+      const newName = prompt('Editar nome da missão:', t.name);
+      if (newName?.trim()) { updateTemplateName(id, newName); }
+    }
+
+    function deleteTemplate(id) {
+      const list = loadTemplates().filter(x => x.id !== id);
+      saveTemplates(list); renderLibrary();
+    }
+
+    function addTemplate() {
+      const name = prompt('Nome da nova missão:');
+      if (!name?.trim()) return;
+      const stars = parseInt(prompt('Quantas estrelas?', '5')) || 5;
+      const list = loadTemplates();
+      const newId = Math.max(0, ...list.map(x => x.id)) + 1;
+      list.push({ id: newId, name: name.trim(), stars });
+      saveTemplates(list); renderLibrary();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderLibrary);
+    // ─────────────────────────────────────────────────────────
+
     function syncStars(from, raw) {
         const val = Math.max(1, parseInt(raw) || 1);
         document.getElementById('stars-display').innerHTML = val + ' <i class="fa-solid fa-star"></i>';

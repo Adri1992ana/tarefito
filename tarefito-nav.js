@@ -508,11 +508,18 @@ async function _loadChildCheckboxes() {
   if (!children?.length) return;
 
   // Encontra o container dos checkboxes de crianças
-  const container = document.querySelector('#target-schedule .flex.gap-3, #target-schedule .overflow-x-auto');
+  const container = document.getElementById('child-checkboxes')
+    || document.querySelector('#target-schedule .flex.gap-3, #target-schedule .overflow-x-auto');
   if (!container) return;
 
+  // garante layout em linha com quebra
+  container.style.display    = 'flex';
+  container.style.flexWrap   = 'wrap';
+  container.style.flexDirection = 'row';
+  container.style.gap        = '10px';
+
   container.innerHTML = children.map((c, i) => `
-    <label class="relative cursor-pointer shrink-0">
+    <label class="relative cursor-pointer" style="flex:0 0 auto;">
       <input type="checkbox" name="assigned_child" value="${c.id}"
              class="peer sr-only radio-gaming" ${i===0 ? 'checked' : ''} />
       <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface
@@ -525,7 +532,7 @@ async function _loadChildCheckboxes() {
         <span class="text-[10px] font-bold text-white truncate w-14 text-center">${c.name}</span>
       </div>
     </label>`).join('') + `
-    <label class="relative cursor-pointer shrink-0">
+    <label class="relative cursor-pointer" style="flex:0 0 auto;">
       <input type="checkbox" name="assigned_child" value="all" class="peer sr-only" />
       <div class="w-16 h-20 rounded-xl border-2 border-gray-700 bg-dark-surface
            flex flex-col items-center justify-center gap-2 transition-all
