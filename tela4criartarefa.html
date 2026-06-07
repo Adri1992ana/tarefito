@@ -438,11 +438,11 @@
         row.className = 'glass-panel rounded-[16px] px-4 py-3 border border-neon-cyan/25 flex items-center gap-3';
         row.innerHTML = `
           <button onclick="applyTemplate(${t.id})"
-                  class="flex-1 text-left flex items-center gap-3 group">
+                  class="flex-1 min-w-0 text-left flex items-center gap-3 group">
             <div class="w-8 h-8 rounded-lg bg-dark-bg border border-neon-cyan/40 flex items-center justify-center flex-shrink-0 group-hover:border-neon-cyan transition-colors">
               <i class="fa-solid fa-bolt text-neon-cyan text-xs"></i>
             </div>
-            <span class="font-display text-sm text-white group-hover:text-neon-cyan transition-colors truncate">${t.name}</span>
+            <span class="font-display text-sm text-white group-hover:text-neon-cyan transition-colors break-words leading-tight">${t.name}</span>
           </button>
           <div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-dark-bg border border-yellow-400/30 flex-shrink-0">
             <input type="number" value="${t.stars}" min="1" max="9999"
