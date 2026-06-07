@@ -180,6 +180,20 @@
 
         <div class="px-6 py-6 flex flex-col gap-6 flex-1">
 
+            <!-- Biblioteca de Recompensas -->
+            <section id="reward-library" class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-display text-lg text-white flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-yellow-400 text-base"></i> Biblioteca de Prêmios
+                    </h2>
+                    <button onclick="addRewardTemplate()"
+                            class="text-xs font-bold text-neon-purple flex items-center gap-1 hover:opacity-75 transition-opacity">
+                        <i class="fa-solid fa-plus text-xs"></i> Novo
+                    </button>
+                </div>
+                <div id="reward-template-list" class="flex flex-col gap-2"></div>
+            </section>
+
             <!-- Header & Stats Summary -->
             <section id="reward-stats-summary" class="flex flex-col gap-4">
                 <div class="flex justify-between items-end mb-2">
@@ -281,7 +295,104 @@
     </style>
 
   <script>
-    // nav liberada
+    // ── Biblioteca de recompensas ─────────────────────────────
+    const REWARD_LIB_KEY = 'tf_reward_library';
+
+    const DEFAULT_REWARD_TEMPLATES = [
+      { id: 1, name: 'Passeio no parque',  cost: 100 },
+      { id: 2, name: 'Cinema',             cost: 150 },
+      { id: 3, name: 'Brinquedo',          cost: 200 },
+      { id: 4, name: '1h de videogame',    cost:  50 },
+      { id: 5, name: 'Sorvete',            cost:  75 },
+      { id: 6, name: 'Noite do pijama',    cost: 300 },
+    ];
+
+    function loadRewardTemplates() {
+      try { return JSON.parse(localStorage.getItem(REWARD_LIB_KEY)) || DEFAULT_REWARD_TEMPLATES; }
+      catch { return DEFAULT_REWARD_TEMPLATES; }
+    }
+    function saveRewardTemplates(list) {
+      localStorage.setItem(REWARD_LIB_KEY, JSON.stringify(list));
+    }
+
+    function renderRewardLibrary() {
+      const list = loadRewardTemplates();
+      const container = document.getElementById('reward-template-list');
+      container.innerHTML = '';
+      list.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'glass-panel rounded-[16px] px-4 py-3 border border-yellow-400/20 flex items-center gap-3';
+        row.innerHTML = `
+          <button onclick="applyRewardTemplate(${t.id})"
+                  class="flex-1 min-w-0 text-left flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-lg bg-dark-bg border border-yellow-400/30 flex items-center justify-center flex-shrink-0 group-hover:border-yellow-400 transition-colors">
+              <i class="fa-solid fa-gift text-yellow-400 text-xs"></i>
+            </div>
+            <span class="font-display text-sm text-white group-hover:text-yellow-400 transition-colors break-words leading-tight">${t.name}</span>
+          </button>
+          <div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-dark-bg border border-yellow-400/30 flex-shrink-0">
+            <input type="number" value="${t.cost}" min="1" max="99999"
+                   onchange="updateRewardTemplateCost(${t.id}, this.value)"
+                   onclick="event.stopPropagation()"
+                   class="w-14 bg-transparent text-yellow-400 font-display text-sm text-center outline-none" />
+            <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+          </div>
+          <button onclick="editRewardTemplateName(${t.id})"
+                  class="text-gray-600 hover:text-neon-purple transition-colors flex-shrink-0" title="Editar nome">
+            <i class="fa-solid fa-pen text-xs"></i>
+          </button>
+          <button onclick="deleteRewardTemplate(${t.id})"
+                  class="text-gray-600 hover:text-neon-pink transition-colors flex-shrink-0" title="Remover">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>`;
+        container.appendChild(row);
+      });
+    }
+
+    function applyRewardTemplate(id) {
+      const t = loadRewardTemplates().find(x => x.id === id);
+      if (!t) return;
+      const nameInput = document.querySelector('#reward-creation-form input[type="text"]');
+      const costInput = document.querySelector('#reward-creation-form input[type="number"]');
+      if (nameInput) nameInput.value = t.name;
+      if (costInput) costInput.value = t.cost;
+      nameInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      nameInput?.focus();
+    }
+
+    function updateRewardTemplateCost(id, val) {
+      const list = loadRewardTemplates();
+      const t = list.find(x => x.id === id);
+      if (t) { t.cost = Math.max(1, parseInt(val) || 1); saveRewardTemplates(list); }
+    }
+
+    function editRewardTemplateName(id) {
+      const t = loadRewardTemplates().find(x => x.id === id);
+      if (!t) return;
+      const newName = prompt('Editar nome do prêmio:', t.name);
+      if (!newName?.trim()) return;
+      const list = loadRewardTemplates();
+      const item = list.find(x => x.id === id);
+      if (item) { item.name = newName.trim(); saveRewardTemplates(list); renderRewardLibrary(); }
+    }
+
+    function deleteRewardTemplate(id) {
+      saveRewardTemplates(loadRewardTemplates().filter(x => x.id !== id));
+      renderRewardLibrary();
+    }
+
+    function addRewardTemplate() {
+      const name = prompt('Nome do novo prêmio:');
+      if (!name?.trim()) return;
+      const cost = parseInt(prompt('Custo em estrelas:', '50')) || 50;
+      const list = loadRewardTemplates();
+      const newId = Math.max(0, ...list.map(x => x.id)) + 1;
+      list.push({ id: newId, name: name.trim(), cost });
+      saveRewardTemplates(list); renderRewardLibrary();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderRewardLibrary);
+    // ─────────────────────────────────────────────────────────
   </script>
     <script src="tarefito-supabase.js"></script>
     <script src="tarefito-nav.js"></script>
