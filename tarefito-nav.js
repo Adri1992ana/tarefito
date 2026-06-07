@@ -555,7 +555,7 @@ async function _submitTask() {
   const title = document.querySelector('#mission-basics input[type="text"]')?.value?.trim();
   if (!title) return _toast('Digite o título da missão!', 'err');
 
-  const stars  = parseInt(document.querySelector('input[type="range"]')?.value || '15');
+  const stars  = parseInt(document.getElementById('stars-input')?.value || '15');
   const repeat = document.querySelector('select')?.value || 'none';
 
   const checked = [...document.querySelectorAll('[name="assigned_child"]:checked')];

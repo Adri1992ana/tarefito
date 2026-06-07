@@ -325,27 +325,14 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col gap-3">
-                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider flex justify-between items-center">
-                                Estrelas de Recompensa
-                                <span id="stars-display" class="text-yellow-400 font-display text-lg">15 <i class="fa-solid fa-star"></i></span>
-                            </label>
-                            <input id="stars-range" type="range" min="1" max="200" step="1" value="15"
-                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-yellow-400"
-                                   oninput="syncStars('range', this.value)" />
-                            <div class="flex items-center gap-3">
-                                <div class="flex justify-between text-[10px] text-gray-500 font-bold flex-1">
-                                    <span>1</span>
-                                    <span>100</span>
-                                    <span>200</span>
-                                </div>
-                                <div class="flex items-center gap-1 flex-shrink-0">
-                                    <input id="stars-input" type="number" min="1" max="9999" value="15"
-                                           class="input-gaming w-20 h-9 rounded-lg px-3 text-yellow-400 font-display text-sm text-center"
-                                           style="border-color:rgba(234,179,8,0.4);"
-                                           oninput="syncStars('input', this.value)" />
-                                    <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
-                                </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Estrelas de Recompensa</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-star absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400 text-sm pointer-events-none"></i>
+                                <input id="stars-input" type="number" min="1" max="9999" value="15"
+                                       class="input-gaming w-full h-12 rounded-xl pl-10 pr-4 text-yellow-400 font-display text-lg text-center"
+                                       style="border-color:rgba(234,179,8,0.4); letter-spacing:0.05em;"
+                                       oninput="syncStars(this.value)" />
                             </div>
                         </div>
                     </div>
@@ -472,7 +459,7 @@
       if (!t) return;
       const titleInput = document.querySelector('#mission-basics input[type="text"]');
       if (titleInput) titleInput.value = t.name;
-      syncStars('input', t.stars);
+      syncStars(t.stars);
       titleInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       titleInput?.focus();
     }
@@ -514,16 +501,9 @@
     document.addEventListener('DOMContentLoaded', renderLibrary);
     // ─────────────────────────────────────────────────────────
 
-    function syncStars(from, raw) {
+    function syncStars(raw) {
         const val = Math.max(1, parseInt(raw) || 1);
-        document.getElementById('stars-display').innerHTML = val + ' <i class="fa-solid fa-star"></i>';
-        if (from !== 'range') {
-            const clamped = Math.min(val, 200);
-            document.getElementById('stars-range').value = clamped;
-        }
-        if (from !== 'input') {
-            document.getElementById('stars-input').value = val;
-        }
+        document.getElementById('stars-input').value = val;
     }
   </script>
     <script src="tarefito-supabase.js"></script>
