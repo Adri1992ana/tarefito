@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ════════════ GERENCIAR CRIANÇAS ════════════════════════
     case 'tela2gerenciarcriancas.html': {
-      if (!requireAuth()) break;
+      if (!requireAuthAndTrial()) break;
       _loadChildren();
       // Botão "ACESSAR PAINEL" — seletor exato
       document.querySelectorAll('button').forEach(btn => {
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ════════════ DASHBOARD RESPONSÁVEL ═════════════════════
     case 'tela3dashboard.html': {
-      if (!requireAuth()) break;
+      if (!requireAuthAndTrial()) break;
       _loadDashboard();
       _onBtnText('Criar Missão',   () => Tarefito.navigate('criarTarefa'));
       _onBtnText('Recompensas',    () => Tarefito.navigate('gerenciarLoja'));
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ════════════ CRIAR TAREFA ════════════════════════════
     case 'tela4criartarefa.html': {
-      if (!requireAuth()) break;
+      if (!requireAuthAndTrial()) break;
       _loadChildCheckboxes();
       _onBtnText('Publicar Missão', _submitTask);
       _onBtnText('Cancelar',        () => Tarefito.navigate('dashboard'));
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ════════════ APROVAR TAREFA ═════════════════════════
     case 'tela5aprovartarefa.html': {
-      if (!requireAuth()) break;
+      if (!requireAuthAndTrial()) break;
       _loadPendingTasks();
       _bindBackBtn();
       _bindBottomNav();
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ════════════ GERENCIAR LOJA ═════════════════════════
     case 'tela6gerenciarloja.html': {
-      if (!requireAuth()) break;
+      if (!requireAuthAndTrial()) break;
       _loadRewardsAdmin();
       _onBtnText('Adicionar à Loja', _submitReward);
       _bindBackBtn();
@@ -336,15 +336,52 @@ async function _showAddChildForm() {
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
           <span id="tf-pin-display" style="color:#22c55e;font-family:'Fredoka One',sans-serif;
                 font-size:28px;letter-spacing:4px;">${autoPin}</span>
-          <button id="tf-regen-pin" type="button"
-            style="background:#1e1e2e;border:1px solid #374151;border-radius:10px;
-                   padding:8px 14px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
-            🔄 Novo código
-          </button>
+          <div style="display:flex;gap:8px;flex-shrink:0;">
+            <button id="tf-copy-pin" type="button"
+              style="background:#1e1e2e;border:1px solid rgba(34,197,94,0.4);border-radius:10px;
+                     padding:8px 14px;color:#22c55e;font-size:12px;cursor:pointer;white-space:nowrap;
+                     font-weight:700;transition:all 0.2s;">
+              📋 Copiar
+            </button>
+            <button id="tf-regen-pin" type="button"
+              style="background:#1e1e2e;border:1px solid #374151;border-radius:10px;
+                     padding:8px 14px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
+              🔄 Novo
+            </button>
+          </div>
         </div>
         <p style="color:#6b7280;font-size:11px;margin:8px 0 0;">
-          Anote este código — a criança vai usá-lo para entrar no app.
+          Este código é a senha de acesso da criança no app.
         </p>
+      </div>
+
+      <!-- Card de instrução -->
+      <div id="tf-instruction-card"
+        style="background:rgba(59,130,246,0.08);border:1.5px solid rgba(59,130,246,0.3);
+               border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <p style="color:#60a5fa;font-size:12px;font-weight:800;margin:0;text-transform:uppercase;letter-spacing:1px;">
+          📋 Como a criança acessa?
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:16px;flex-shrink:0;">📱</span>
+            <p style="color:#cbd5e1;font-size:12px;margin:0;line-height:1.5;font-weight:600;">
+              <strong style="color:#fff;">Celular próprio:</strong> Copie o código, abra o app no celular da criança e selecione <strong style="color:#a855f7;">Aventureiro</strong> na tela de login.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:16px;flex-shrink:0;">🔄</span>
+            <p style="color:#cbd5e1;font-size:12px;margin:0;line-height:1.5;font-weight:600;">
+              <strong style="color:#fff;">Celular compartilhado:</strong> Após salvar, toque em <strong style="color:#a855f7;">Sair</strong> e entre novamente como <strong style="color:#a855f7;">Aventureiro</strong> neste mesmo celular.
+            </p>
+          </div>
+        </div>
+        <button id="tf-instruction-ok" type="button"
+          style="align-self:flex-end;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);
+                 border-radius:10px;padding:6px 16px;color:#60a5fa;font-size:12px;
+                 font-weight:800;cursor:pointer;margin-top:2px;">
+          Entendi! →
+        </button>
       </div>
 
       <div style="display:flex;gap:12px;">
@@ -370,11 +407,58 @@ async function _showAddChildForm() {
   setTimeout(() => document.getElementById('tf-child-name')?.focus(), 100);
 
   // Regenerar PIN
+  // Copiar PIN
+  document.getElementById('tf-copy-pin').addEventListener('click', () => {
+    const pin = document.getElementById('tf-pin-display').textContent.trim();
+    navigator.clipboard.writeText(pin).then(() => {
+      const btn = document.getElementById('tf-copy-pin');
+      const original = btn.innerHTML;
+      btn.innerHTML = '✓ Copiado!';
+      btn.style.background = 'rgba(34,197,94,0.2)';
+      btn.style.borderColor = '#22c55e';
+      btn.style.color = '#22c55e';
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.style.background = '#1e1e2e';
+        btn.style.borderColor = 'rgba(34,197,94,0.4)';
+      }, 2000);
+    }).catch(() => {
+      // Fallback para dispositivos sem clipboard API
+      const el = document.createElement('textarea');
+      el.value = pin;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      const btn = document.getElementById('tf-copy-pin');
+      btn.innerHTML = '✓ Copiado!';
+      setTimeout(() => { btn.innerHTML = '📋 Copiar'; }, 2000);
+    });
+  });
+
+  // Regenerar PIN
   document.getElementById('tf-regen-pin').addEventListener('click', () => {
     const newPin = _generatePin();
     document.getElementById('tf-pin-display').textContent = newPin;
     document.getElementById('tf-regen-pin').dataset.pin = newPin;
   });
+
+  // Fechar card de instrução
+  document.getElementById('tf-instruction-ok').addEventListener('click', () => {
+    const card = document.getElementById('tf-instruction-card');
+    card.style.transition = 'opacity 0.3s';
+    card.style.opacity = '0';
+    setTimeout(() => { card.style.display = 'none'; }, 300);
+    try { sessionStorage.setItem('tf_instruction_seen', '1'); } catch(_) {}
+  });
+
+  // Se já viu a instrução antes, esconde direto
+  if (sessionStorage.getItem('tf_instruction_seen') === '1') {
+    const card = document.getElementById('tf-instruction-card');
+    if (card) card.style.display = 'none';
+  }
 
   // Cancelar
   document.getElementById('tf-cancel-child').addEventListener('click', () => modal.remove());

@@ -123,11 +123,14 @@ const DB = {
     if (!rows?.length) rows = await db.get('families', 'responsible_id=eq.' + userId + '&select=*');
     if (rows?.length) { this.family.save(rows[0]); return rows[0]; }
     const code = 'FAM-' + userId.substring(0, 6).toUpperCase();
+    const trialExpires = new Date();
+    trialExpires.setDate(trialExpires.getDate() + 30);
     const res = await db.post('families', {
       owner_id: userId,
       responsible_id: userId,
       name: 'Família de ' + name,
       code,
+      trial_expires_at: trialExpires.toISOString(),
     });
     const fam = Array.isArray(res) ? res[0] : res;
     this.family.save(fam);
@@ -199,6 +202,35 @@ function requireAuth() {
     window.location.href = 'login.html';
     return false;
   }
+  return true;
+}
+
+
+// ─── Trial ───────────────────────────────────────────────────
+
+function checkTrial(family) {
+  if (!family?.trial_expires_at) return { active: false, daysLeft: 0, expiresAt: null };
+  const now       = new Date();
+  const expiresAt = new Date(family.trial_expires_at);
+  const diffMs    = expiresAt - now;
+  const daysLeft  = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  return { active: diffMs > 0, daysLeft: Math.max(0, daysLeft), expiresAt };
+}
+
+function guardTrial() {
+  const family = DB.family.get();
+  const trial  = checkTrial(family);
+  if (!trial.active) {
+    console.warn('[Tarefito] Trial expirado');
+    window.location.href = 'trial-expirado.html';
+    return false;
+  }
+  return true;
+}
+
+function requireAuthAndTrial() {
+  if (!requireAuth())  return false;
+  if (!guardTrial())   return false;
   return true;
 }
 
