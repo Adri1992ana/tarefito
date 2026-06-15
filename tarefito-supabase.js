@@ -147,6 +147,9 @@ const DB = {
   async updateChild(childId, updates) {
     return db.patch('members', updates, 'id=eq.' + childId);
   },
+  async deleteChild(childId) {
+    return db.delete('members', 'id=eq.' + childId);
+  },
 
   // ── Tasks ──
   async getTasks(parentId, childId) {

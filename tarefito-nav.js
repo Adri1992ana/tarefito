@@ -249,6 +249,9 @@ async function _loadChildren() {
       list.querySelectorAll('.btn-regen-pin').forEach(btn => {
         btn.addEventListener('click', () => _regenPin(btn.dataset.id));
       });
+      list.querySelectorAll('.btn-delete-child').forEach(btn => {
+        btn.addEventListener('click', () => _deleteChild(btn.dataset.id, btn.dataset.name));
+      });
     }
   } catch(e) { console.error('[loadChildren]', e); }
 
@@ -279,6 +282,10 @@ function _childCardHTML(c) {
           <button class="btn-edit-name text-gray-500 hover:text-neon-purple transition-colors"
                   data-id="${c.id}" data-name="${safeName}" title="Editar nome">
             <i class="fa-solid fa-pen text-xs"></i>
+          </button>
+          <button class="btn-delete-child text-gray-500 hover:text-red-400 transition-colors"
+                  data-id="${c.id}" data-name="${safeName}" title="Excluir explorador">
+            <i class="fa-solid fa-trash text-xs"></i>
           </button>
         </div>
         <span class="text-xs text-gray-400 font-bold">
@@ -333,19 +340,20 @@ async function _showAddChildForm() {
         <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 8px;">
           Código Secreto (gerado automaticamente)
         </p>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;min-width:0;">
           <span id="tf-pin-display" style="color:#22c55e;font-family:'Fredoka One',sans-serif;
-                font-size:28px;letter-spacing:4px;">${autoPin}</span>
-          <div style="display:flex;gap:8px;flex-shrink:0;">
+                font-size:22px;letter-spacing:2px;flex-shrink:1;min-width:0;overflow:hidden;
+                text-overflow:ellipsis;">${autoPin}</span>
+          <div style="display:flex;gap:6px;flex-shrink:0;margin-left:auto;">
             <button id="tf-copy-pin" type="button"
               style="background:#1e1e2e;border:1px solid rgba(34,197,94,0.4);border-radius:10px;
-                     padding:8px 14px;color:#22c55e;font-size:12px;cursor:pointer;white-space:nowrap;
+                     padding:7px 12px;color:#22c55e;font-size:12px;cursor:pointer;white-space:nowrap;
                      font-weight:700;transition:all 0.2s;">
               📋 Copiar
             </button>
             <button id="tf-regen-pin" type="button"
               style="background:#1e1e2e;border:1px solid #374151;border-radius:10px;
-                     padding:8px 14px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
+                     padding:7px 12px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
               🔄 Novo
             </button>
           </div>
@@ -384,7 +392,7 @@ async function _showAddChildForm() {
         </button>
       </div>
 
-      <div style="display:flex;gap:12px;">
+      <div style="display:flex;gap:12px;margin-top:20px;">
         <button id="tf-cancel-child" type="button"
           style="flex:1;height:48px;border-radius:14px;border:2px solid #374151;
                  background:transparent;color:#9ca3af;font-weight:700;cursor:pointer;font-size:14px;">
@@ -1049,6 +1057,51 @@ async function _regenPin(childId) {
     _toast('Novo PIN: ' + pin, 'ok');
     await _loadChildren();
   } catch(e) { _toast('Erro ao gerar PIN', 'err'); }
+}
+
+async function _deleteChild(childId, childName) {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;' +
+    'display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:#13131a;border:1px solid rgba(239,68,68,0.4);border-radius:24px;
+                padding:28px;width:100%;max-width:340px;box-shadow:0 0 40px rgba(239,68,68,0.2);">
+      <div style="text-align:center;margin-bottom:16px;">
+        <i class="fa-solid fa-triangle-exclamation" style="color:#f87171;font-size:32px;"></i>
+      </div>
+      <h2 style="color:#fff;font-family:'Fredoka One',sans-serif;font-size:18px;margin:0 0 8px;text-align:center;">
+        Excluir Explorador?
+      </h2>
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin:0 0 24px;line-height:1.5;">
+        Tem certeza que deseja excluir <strong style="color:#fff;">${childName.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</strong>?
+        Esta ação não pode ser desfeita.
+      </p>
+      <div style="display:flex;gap:12px;">
+        <button id="tf-delete-cancel"
+          style="flex:1;height:44px;border-radius:12px;border:2px solid #374151;
+                 background:transparent;color:#9ca3af;font-weight:700;cursor:pointer;font-size:14px;">
+          Cancelar
+        </button>
+        <button id="tf-delete-confirm"
+          style="flex:1;height:44px;border-radius:12px;border:none;
+                 background:linear-gradient(90deg,#ef4444,#b91c1c);color:#fff;
+                 font-family:'Fredoka One',sans-serif;font-size:15px;cursor:pointer;">
+          Excluir
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  modal.querySelector('#tf-delete-cancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  modal.querySelector('#tf-delete-confirm').addEventListener('click', async () => {
+    modal.remove();
+    try {
+      await DB.deleteChild(childId);
+      _toast('Explorador removido', 'ok');
+      await _loadChildren();
+    } catch(e) { _toast('Erro ao excluir explorador', 'err'); }
+  });
 }
 
 function _editReward(r) {
