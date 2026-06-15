@@ -86,8 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
               btn.innerHTML = 'INICIAR MISSÃO <i class="fa-solid fa-rocket"></i>';
               return _toast('Código secreto inválido!', 'err');
             }
+            // Limpa sessão anterior antes de salvar nova família
+            sessionStorage.removeItem('tf_family');
+            sessionStorage.removeItem('tf_child');
+            sessionStorage.removeItem('tf_mission');
             const fam = await db.get('families', 'owner_id=eq.' + members[0].parent_id + '&select=*');
-            if (fam?.[0]) DB.family.save(fam[0]);
+            if (!fam?.length) {
+              btn.innerHTML = 'INICIAR MISSÃO <i class="fa-solid fa-rocket"></i>';
+              return _toast('Família não encontrada. Contate o responsável.', 'err');
+            }
+            DB.family.save(fam[0]);
             DB.child.save(members[0]);
             Tarefito.navigate('dashboardCrianca');
           } catch (e) {
@@ -249,9 +257,6 @@ async function _loadChildren() {
       list.querySelectorAll('.btn-regen-pin').forEach(btn => {
         btn.addEventListener('click', () => _regenPin(btn.dataset.id));
       });
-      list.querySelectorAll('.btn-delete-child').forEach(btn => {
-        btn.addEventListener('click', () => _deleteChild(btn.dataset.id, btn.dataset.name));
-      });
     }
   } catch(e) { console.error('[loadChildren]', e); }
 
@@ -282,10 +287,6 @@ function _childCardHTML(c) {
           <button class="btn-edit-name text-gray-500 hover:text-neon-purple transition-colors"
                   data-id="${c.id}" data-name="${safeName}" title="Editar nome">
             <i class="fa-solid fa-pen text-xs"></i>
-          </button>
-          <button class="btn-delete-child text-gray-500 hover:text-red-400 transition-colors"
-                  data-id="${c.id}" data-name="${safeName}" title="Excluir explorador">
-            <i class="fa-solid fa-trash text-xs"></i>
           </button>
         </div>
         <span class="text-xs text-gray-400 font-bold">
@@ -340,20 +341,19 @@ async function _showAddChildForm() {
         <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 8px;">
           Código Secreto (gerado automaticamente)
         </p>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
           <span id="tf-pin-display" style="color:#22c55e;font-family:'Fredoka One',sans-serif;
-                font-size:22px;letter-spacing:2px;flex-shrink:1;min-width:0;overflow:hidden;
-                text-overflow:ellipsis;">${autoPin}</span>
-          <div style="display:flex;gap:6px;flex-shrink:0;margin-left:auto;">
+                font-size:28px;letter-spacing:4px;">${autoPin}</span>
+          <div style="display:flex;gap:8px;flex-shrink:0;">
             <button id="tf-copy-pin" type="button"
               style="background:#1e1e2e;border:1px solid rgba(34,197,94,0.4);border-radius:10px;
-                     padding:7px 12px;color:#22c55e;font-size:12px;cursor:pointer;white-space:nowrap;
+                     padding:8px 14px;color:#22c55e;font-size:12px;cursor:pointer;white-space:nowrap;
                      font-weight:700;transition:all 0.2s;">
               📋 Copiar
             </button>
             <button id="tf-regen-pin" type="button"
               style="background:#1e1e2e;border:1px solid #374151;border-radius:10px;
-                     padding:7px 12px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
+                     padding:8px 14px;color:#9ca3af;font-size:12px;cursor:pointer;white-space:nowrap;">
               🔄 Novo
             </button>
           </div>
@@ -392,7 +392,7 @@ async function _showAddChildForm() {
         </button>
       </div>
 
-      <div style="display:flex;gap:12px;margin-top:20px;">
+      <div style="display:flex;gap:12px;">
         <button id="tf-cancel-child" type="button"
           style="flex:1;height:48px;border-radius:14px;border:2px solid #374151;
                  background:transparent;color:#9ca3af;font-weight:700;cursor:pointer;font-size:14px;">
@@ -418,32 +418,25 @@ async function _showAddChildForm() {
   // Copiar PIN
   document.getElementById('tf-copy-pin').addEventListener('click', () => {
     const pin = document.getElementById('tf-pin-display').textContent.trim();
-    navigator.clipboard.writeText(pin).then(() => {
-      const btn = document.getElementById('tf-copy-pin');
-      const original = btn.innerHTML;
+    const btn = document.getElementById('tf-copy-pin');
+    const copy = () => {
       btn.innerHTML = '✓ Copiado!';
       btn.style.background = 'rgba(34,197,94,0.2)';
-      btn.style.borderColor = '#22c55e';
-      btn.style.color = '#22c55e';
-      setTimeout(() => {
-        btn.innerHTML = original;
-        btn.style.background = '#1e1e2e';
-        btn.style.borderColor = 'rgba(34,197,94,0.4)';
-      }, 2000);
-    }).catch(() => {
-      // Fallback para dispositivos sem clipboard API
+      setTimeout(() => { btn.innerHTML = '📋 Copiar'; btn.style.background = '#1e1e2e'; }, 2000);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(pin).then(copy).catch(() => {
+        const el = document.createElement('textarea');
+        el.value = pin; el.style.position='fixed'; el.style.opacity='0';
+        document.body.appendChild(el); el.select(); document.execCommand('copy');
+        document.body.removeChild(el); copy();
+      });
+    } else {
       const el = document.createElement('textarea');
-      el.value = pin;
-      el.style.position = 'fixed';
-      el.style.opacity = '0';
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-      const btn = document.getElementById('tf-copy-pin');
-      btn.innerHTML = '✓ Copiado!';
-      setTimeout(() => { btn.innerHTML = '📋 Copiar'; }, 2000);
-    });
+      el.value = pin; el.style.position='fixed'; el.style.opacity='0';
+      document.body.appendChild(el); el.select(); document.execCommand('copy');
+      document.body.removeChild(el); copy();
+    }
   });
 
   // Regenerar PIN
@@ -461,8 +454,6 @@ async function _showAddChildForm() {
     setTimeout(() => { card.style.display = 'none'; }, 300);
     try { sessionStorage.setItem('tf_instruction_seen', '1'); } catch(_) {}
   });
-
-  // Se já viu a instrução antes, esconde direto
   if (sessionStorage.getItem('tf_instruction_seen') === '1') {
     const card = document.getElementById('tf-instruction-card');
     if (card) card.style.display = 'none';
@@ -786,7 +777,9 @@ async function _loadRewardsAdmin() {
   if (!list) return;
 
   try {
-    const rewards = await DB.getRewards(family.id);
+    // Usa owner_id pois rewards são indexados por parent_id (= owner_id do responsável)
+    const parentId = family.owner_id || family.responsible_id || family.id;
+    const rewards = await DB.getRewards(parentId);
     list.innerHTML = '';
     if (!rewards?.length) {
       list.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Nenhum prêmio cadastrado ainda.</p>';
@@ -951,9 +944,15 @@ async function _loadShop(child) {
   if (!family) return;
 
   try {
-    const rewards = await DB.getRewards(family.id);
+    // Usa owner_id pois rewards são indexados por parent_id (= owner_id do responsável)
+    const parentId = family.owner_id || family.responsible_id || family.id;
+    const rewards = await DB.getRewards(parentId);
     const grid = document.querySelector('#reward-catalog .grid');
-    if (!grid || !rewards?.length) return;
+    if (!grid) return;
+    if (!rewards?.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#6b7280;font-weight:700;">Nenhum prêmio disponível ainda.</div>';
+      return;
+    }
 
     grid.innerHTML = rewards.map(r => {
       const can = (child.stars||0) >= r.cost;
@@ -1057,51 +1056,6 @@ async function _regenPin(childId) {
     _toast('Novo PIN: ' + pin, 'ok');
     await _loadChildren();
   } catch(e) { _toast('Erro ao gerar PIN', 'err'); }
-}
-
-async function _deleteChild(childId, childName) {
-  const modal = document.createElement('div');
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;' +
-    'display:flex;align-items:center;justify-content:center;padding:20px;';
-  modal.innerHTML = `
-    <div style="background:#13131a;border:1px solid rgba(239,68,68,0.4);border-radius:24px;
-                padding:28px;width:100%;max-width:340px;box-shadow:0 0 40px rgba(239,68,68,0.2);">
-      <div style="text-align:center;margin-bottom:16px;">
-        <i class="fa-solid fa-triangle-exclamation" style="color:#f87171;font-size:32px;"></i>
-      </div>
-      <h2 style="color:#fff;font-family:'Fredoka One',sans-serif;font-size:18px;margin:0 0 8px;text-align:center;">
-        Excluir Explorador?
-      </h2>
-      <p style="color:#9ca3af;font-size:13px;text-align:center;margin:0 0 24px;line-height:1.5;">
-        Tem certeza que deseja excluir <strong style="color:#fff;">${childName.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</strong>?
-        Esta ação não pode ser desfeita.
-      </p>
-      <div style="display:flex;gap:12px;">
-        <button id="tf-delete-cancel"
-          style="flex:1;height:44px;border-radius:12px;border:2px solid #374151;
-                 background:transparent;color:#9ca3af;font-weight:700;cursor:pointer;font-size:14px;">
-          Cancelar
-        </button>
-        <button id="tf-delete-confirm"
-          style="flex:1;height:44px;border-radius:12px;border:none;
-                 background:linear-gradient(90deg,#ef4444,#b91c1c);color:#fff;
-                 font-family:'Fredoka One',sans-serif;font-size:15px;cursor:pointer;">
-          Excluir
-        </button>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-
-  modal.querySelector('#tf-delete-cancel').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-  modal.querySelector('#tf-delete-confirm').addEventListener('click', async () => {
-    modal.remove();
-    try {
-      await DB.deleteChild(childId);
-      _toast('Explorador removido', 'ok');
-      await _loadChildren();
-    } catch(e) { _toast('Erro ao excluir explorador', 'err'); }
-  });
 }
 
 function _editReward(r) {
