@@ -6,15 +6,15 @@
 const Tarefito = {
   pages: {
     login:             'login.html',
-    cadastro:          'tela0cadastro.html',
-    gerenciarCriancas: 'tela2gerenciarcriancas.html',
-    dashboard:         'tela3dashboard.html',
-    criarTarefa:       'tela4criartarefa.html',
-    aprovarTarefa:     'tela5aprovartarefa.html',
-    gerenciarLoja:     'tela6gerenciarloja.html',
-    dashboardCrianca:  'tela7dashboardvisaocrianca.html',
-    realizandoTarefa:  'tela8realizandotarefa.html',
-    lojaCrianca:       'tela9lojavisaocrianca.html',
+    cadastro:          'cadastro.html',
+    gerenciarCriancas: 'gerenciarcriancas.html',
+    dashboard:         'dashboard.html',
+    criarTarefa:       'criartarefa.html',
+    aprovarTarefa:     'aprovartarefa.html',
+    gerenciarLoja:     'gerenciarloja.html',
+    dashboardCrianca:  'dashboardvisaocrianca.html',
+    realizandoTarefa:  'realizandotarefa.html',
+    lojaCrianca:       'lojavisaocrianca.html',
   },
   navigate(key) {
     const p = this.pages[key];
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ GERENCIAR CRIANÇAS ════════════════════════
-    case 'tela2gerenciarcriancas.html': {
+    case 'gerenciarcriancas.html': {
       if (!requireAuthAndTrial()) break;
       _loadChildren();
       // Botão "ACESSAR PAINEL" — seletor exato
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ DASHBOARD RESPONSÁVEL ═════════════════════
-    case 'tela3dashboard.html': {
+    case 'dashboard.html': {
       if (!requireAuthAndTrial()) break;
       _loadDashboard();
       _onBtnText('Criar Missão',   () => Tarefito.navigate('criarTarefa'));
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ CRIAR TAREFA ════════════════════════════
-    case 'tela4criartarefa.html': {
+    case 'criartarefa.html': {
       if (!requireAuthAndTrial()) break;
       _loadChildCheckboxes();
       _onBtnText('Publicar Missão', _submitTask);
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ APROVAR TAREFA ═════════════════════════
-    case 'tela5aprovartarefa.html': {
+    case 'aprovartarefa.html': {
       if (!requireAuthAndTrial()) break;
       _loadPendingTasks();
       _bindBackBtn();
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ GERENCIAR LOJA ═════════════════════════
-    case 'tela6gerenciarloja.html': {
+    case 'gerenciarloja.html': {
       if (!requireAuthAndTrial()) break;
       _loadRewardsAdmin();
       _onBtnText('Adicionar à Loja', _submitReward);
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ DASHBOARD CRIANÇA ══════════════════════
-    case 'tela7dashboardvisaocrianca.html': {
+    case 'dashboardvisaocrianca.html': {
       const child = DB.child.get();
       if (!child) { Tarefito.navigate('login'); break; }
       _loadChildDashboard(child);
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ REALIZANDO TAREFA ══════════════════════
-    case 'tela8realizandotarefa.html': {
+    case 'realizandotarefa.html': {
       const child = DB.child.get();
       if (!child) { Tarefito.navigate('login'); break; }
       _loadMissionDetail();
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ════════════ LOJA CRIANÇA ═══════════════════════════
-    case 'tela9lojavisaocrianca.html': {
+    case 'lojavisaocrianca.html': {
       const child = DB.child.get();
       if (!child) { Tarefito.navigate('login'); break; }
       _loadShop(child);
@@ -529,7 +529,6 @@ async function _loadDashboard() {
       badgeFilhos.textContent = children?.length ? '(' + children.length + ')' : '';
     }
 
-    // Navegação do botão Filhos para tela2
     const btnFilhos = document.getElementById('btn-filhos');
     if (btnFilhos && !btnFilhos._navBound) {
       btnFilhos._navBound = true;

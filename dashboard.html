@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tarefito - Aprovação de Tarefas</title>
+    <title>Tarefito - Painel do Responsável</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -145,18 +145,15 @@
             border-radius: 50%;
             transition: all 0.3s;
         }
-
-        /* Custom Radio/Checkbox gaming style */
-        .radio-gaming:checked + div {
-            border-color: #3b82f6;
-            box-shadow: 0 0 15px rgba(59,130,246,0.5);
-            background-color: rgba(59,130,246,0.1);
-        }
-        .radio-gaming:checked + div .check-icon {
-            opacity: 1;
-            transform: scale(1);
-        }
     </style>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "x7n1zsluda");
+    </script>
 </head>
 <body class="min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0">
 
@@ -175,119 +172,122 @@
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
             <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-                Aprovação
+                Painel Central
             </h1>
-            <div class="w-10 h-10"></div>
+            <button onclick="goToLogin()"
+                    class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-gray-500 hover:text-neon-pink hover:border-neon-pink transition-colors"
+                    title="Sair">
+                <i class="fa-solid fa-right-from-bracket text-sm"></i>
+            </button>
         </header>
 
         <div class="px-6 py-6 flex flex-col gap-6 flex-1">
-
-            <!-- Header & Stats Summary -->
-            <section id="stats-summary" class="flex flex-col gap-4">
-                <div class="flex justify-between items-end mb-2">
-                    <div class="flex flex-col">
-                        <h2 class="font-display text-2xl text-white">Fila de Revisão</h2>
-                        <p id="subtitle-pendentes" class="text-sm text-gray-400">carregando…</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="glass-panel rounded-[20px] p-4 border border-neon-blue/30 relative overflow-hidden flex flex-col items-center justify-center gap-2">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-neon-blue opacity-10 blur-[20px] rounded-full"></div>
-                        <div class="w-10 h-10 rounded-full bg-dark-bg border border-neon-blue/50 flex items-center justify-center">
-                            <i class="fa-solid fa-hourglass-half text-neon-blue text-lg"></i>
-                        </div>
-                        <span id="count-pendentes" class="font-display text-2xl text-white">—</span>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pendentes</span>
-                    </div>
-
-                    <div class="glass-panel rounded-[20px] p-4 border border-neon-green/30 relative overflow-hidden flex flex-col items-center justify-center gap-2">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-neon-green opacity-10 blur-[20px] rounded-full"></div>
-                        <div class="w-10 h-10 rounded-full bg-dark-bg border border-neon-green/50 flex items-center justify-center">
-                            <i class="fa-solid fa-check-double text-neon-green text-lg"></i>
-                        </div>
-                        <span id="count-aprovadas" class="font-display text-2xl text-white">—</span>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aprovadas</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Pending Approval Queue -->
-            <section id="approval-queue" class="flex flex-col gap-4">
-            </section>
-
-            <!-- Decision History & Analytics -->
-            <section id="decision-history" class="flex flex-col gap-4 mt-4 mb-8">
-                
-            </section>
-
-        </div>
-
-        <!-- Rejection Feedback Modal (Hidden by default) -->
-        <div id="rejection-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('rejection-modal').classList.add('hidden')"></div>
             
-            <div class="w-full max-w-sm glass-panel rounded-[32px] p-6 border-2 border-neon-pink/50 relative z-10 shadow-[0_0_40px_rgba(236,72,153,0.3)]">
-                <div class="absolute top-0 left-0 w-32 h-32 bg-neon-pink opacity-10 blur-[40px] rounded-full pointer-events-none"></div>
-                
-                <div class="flex flex-col items-center text-center gap-4">
-                    <div class="w-16 h-16 rounded-full bg-neon-pink/20 border-2 border-neon-pink flex items-center justify-center text-neon-pink text-2xl shadow-neon-pink mb-2">
-                        <i class="fa-solid fa-rotate-left"></i>
+            <!-- Global Stats Header -->
+            <section id="global-stats" class="flex flex-col gap-4">
+                <div class="flex gap-4">
+                    <div class="flex-1 glass-panel rounded-[24px] p-5 border border-neon-purple/30 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-neon-purple opacity-10 blur-[30px] rounded-full"></div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-dark-bg border border-neon-purple/50 flex items-center justify-center">
+                                <i class="fa-solid fa-star text-yellow-400 text-sm drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]"></i>
+                            </div>
+                            <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Estrelas</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <h2 class="font-display text-3xl text-white">0</h2>
+                        </div>
                     </div>
                     
-                    <h3 class="font-display text-xl text-white">Rejeitar Missão</h3>
-                    <p class="text-sm font-bold text-gray-400">Explique o que precisa ser ajustado para ganhar as estrelas.</p>
-                    
-                    <div class="w-full flex flex-col gap-2 text-left mt-2">
-                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Comentário (Obrigatório)</label>
-                        <textarea placeholder="Ex: Faltou guardar os brinquedos no baú..." class="input-gaming w-full h-24 rounded-xl p-4 text-white placeholder-gray-500 font-bold resize-none focus:border-neon-pink focus:shadow-neon-pink"></textarea>
-                    </div>
-                    
-                    <div class="w-full flex gap-3 mt-4">
-                        <button onclick="document.getElementById('rejection-modal').classList.add('hidden')" class="flex-1 h-12 rounded-xl bg-dark-surface text-gray-300 font-bold text-sm border border-gray-600 hover:bg-gray-800 transition-colors">
-                            Cancelar
-                        </button>
-                        <button class="btn-gaming flex-1 h-12 rounded-xl bg-gradient-to-r from-neon-pink to-rose-600 text-white font-display text-sm tracking-wide shadow-neon-pink border-b-4 border-rose-900 flex items-center justify-center">
-                            Enviar
-                        </button>
+                    <div class="flex-1 glass-panel rounded-[24px] p-5 border border-neon-pink/30 relative overflow-hidden group">
+                            <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-dark-bg border border-neon-pink/50 flex items-center justify-center">
+                                <i class="fa-solid fa-bell text-neon-pink text-sm"></i>
+                            </div>
+                            <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Aprovar</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <h2 class="font-display text-3xl text-white">0</h2>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- Quick Actions Grid -->
+            <section id="quick-actions" class="flex flex-col gap-3">
+                <h3 class="font-display text-lg text-white mb-1">Ações Rápidas</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-blue hover:bg-neon-blue/5 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-neon-blue group-hover:shadow-neon-blue transition-all">
+                            <i class="fa-solid fa-plus text-neon-blue text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-300">Criar Missão</span>
+                    </button>
+                    <button id="btn-aprovar" class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-pink hover:bg-neon-pink/5 transition-all group relative">
+                        <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-neon-pink group-hover:shadow-neon-pink transition-all">
+                            <i class="fa-solid fa-check-double text-neon-pink text-lg"></i>
+                        </div>
+                        <span id="badge-aprovar" class="text-xs font-bold text-gray-300">Aprovar</span>
+                    </button>
+                    <button class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-yellow-400 hover:bg-yellow-400/5 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-yellow-400 group-hover:shadow-[0_0_15px_rgba(250,204,21,0.5)] transition-all">
+                            <i class="fa-solid fa-gift text-yellow-400 text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-300">Recompensas</span>
+                    </button>
+                    <button id="btn-filhos" class="glass-panel rounded-[20px] p-4 border border-gray-700 flex flex-col items-center justify-center gap-3 hover:border-neon-purple hover:bg-neon-purple/5 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-dark-bg border border-gray-600 flex items-center justify-center group-hover:border-neon-purple group-hover:shadow-neon-purple transition-all">
+                            <i class="fa-solid fa-users text-neon-purple text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-300">Filhos
+                            <span id="badge-filhos" class="ml-1 text-neon-purple"></span>
+                        </span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Child Progress Cards -->
+            <section id="child-progress" class="flex flex-col gap-4 mt-2">
+                <h3 class="font-display text-lg text-white flex items-center justify-between">
+                    Progresso <span class="text-xs text-neon-blue font-body cursor-pointer">Ver Todos</span>
+                </h3>
+            </section>
+
         </div>
 
-        <!-- Bottom Navigation Bar (Copied 1:1 from context) -->
+        <!-- Bottom Navigation Bar -->
         <nav class="fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50">
             <div class="max-w-[430px] mx-auto flex justify-around items-center h-20 px-2">
-                <!-- Painel (Inactive) -->
-                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
-                    <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
-                    <span class="text-[9px] font-bold uppercase">Painel</span>
+                <!-- Painel (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
+                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-chart-pie text-neon-purple text-xl"></i>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-neon-purple mt-8">Painel</span>
                 </a>
-                
+
                 <!-- Missões (Inactive) -->
                 <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
                     <i class="fa-solid fa-list-check text-xl mb-1"></i>
                     <span class="text-[9px] font-bold uppercase">Missões</span>
                 </a>
-                
+
                 <!-- Filhos (Inactive) -->
                 <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
                     <i class="fa-solid fa-users text-xl mb-1"></i>
                     <span class="text-[9px] font-bold uppercase">Filhos</span>
                 </a>
-                
+
                 <!-- Recompensas (Inactive) -->
                 <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
                     <i class="fa-solid fa-gift text-xl mb-1"></i>
                     <span class="text-[9px] font-bold uppercase">Prêmios</span>
                 </a>
-                
-                <!-- Aprovação (Active) -->
-                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
-                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-blue shadow-neon-blue flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-check-double text-neon-blue text-xl"></i>
-                    </div>
-                    <span class="text-[9px] font-bold uppercase text-neon-blue mt-8">Validar</span>
+
+                <!-- Aprovação -->
+                <a href="aprovartarefa.html" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-check-double text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Validar</span>
                 </a>
             </div>
         </nav>

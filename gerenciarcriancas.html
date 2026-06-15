@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tarefito - Detalhe da Missão</title>
+    <title>Tarefito - Gerenciamento de Filhos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -37,7 +40,6 @@
                         'neon-blue': '0 0 15px rgba(59,130,246,0.5)',
                         'neon-green': '0 0 15px rgba(34,197,94,0.5)',
                         'neon-pink': '0 0 15px rgba(236,72,153,0.5)',
-                        'neon-cyan': '0 0 15px rgba(6,182,212,0.5)',
                         'inner-glow': 'inset 0 0 20px rgba(0,0,0,0.5)',
                         'btn-press': 'inset 0 4px 6px rgba(0,0,0,0.3)'
                     },
@@ -105,15 +107,6 @@
             animation: float 4s ease-in-out infinite;
         }
 
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-        }
-        
-        .animate-pulse-glow {
-            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
         /* Toggle Switch Gaming */
         .toggle-checkbox:checked {
             right: 0;
@@ -152,36 +145,15 @@
             border-radius: 50%;
             transition: all 0.3s;
         }
-
-        /* Custom Radio/Checkbox gaming style */
-        .radio-gaming:checked + div {
-            border-color: #a855f7;
-            box-shadow: 0 0 15px rgba(168,85,247,0.5);
-            background-color: rgba(168,85,247,0.1);
-        }
-        .radio-gaming:checked + div .check-icon {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .progress-bar-animated {
-            background-size: 200% 200%;
-            animation: gradientMove 3s ease infinite;
-        }
-        
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .chat-bubble-user {
-            border-radius: 20px 20px 0 20px;
-        }
-        .chat-bubble-bot {
-            border-radius: 20px 20px 20px 0;
-        }
     </style>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "x7n1zsluda");
+    </script>
 </head>
 <body class="min-h-[100dvh] w-full flex flex-col font-body bg-radial-burst relative overflow-x-hidden m-0 p-0">
 
@@ -189,7 +161,6 @@
     <div class="fixed inset-0 pointer-events-none z-0">
         <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-neon-purple opacity-10 blur-[100px]"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-neon-blue opacity-10 blur-[120px]"></div>
-        <div class="absolute top-[40%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-neon-cyan opacity-5 blur-[80px]"></div>
     </div>
 
     <!-- Main Container - Mobile First (375x840 target) -->
@@ -198,98 +169,107 @@
         <!-- Top Navigation / Header -->
         <header id="app-header" class="w-full flex items-center justify-between px-6 py-5 sticky top-0 bg-dark-bg/80 backdrop-blur-md z-50 border-b border-gray-800">
             <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
-                <i class="fa-solid fa-arrow-left"></i>
+                <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple">
-                Missão
+            <h1 class="font-display text-xl text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+                Meus Exploradores
             </h1>
-            <button class="w-10 h-10 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
+            <div class="w-10 h-10"></div>
         </header>
 
-        <div class="px-5 py-6 flex flex-col gap-6 flex-1 overflow-y-auto">
+        <div class="px-6 py-6 flex flex-col gap-6 flex-1">
 
-            <!-- Mission Description & Files -->
-            <section id="mission-description" class="flex flex-col gap-3">
-                <h3 class="font-display text-lg text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-neon-cyan"></i> Detalhes
-                </h3>
-                
-                <div class="glass-panel rounded-[20px] p-5 border border-gray-700 flex flex-col gap-4">
-                    <p class="text-sm text-gray-300 leading-relaxed font-semibold">
-                        Leia o capítulo 4 do livro "Aventuras no Espaço". Preste bastante atenção nos novos planetas que a tripulação descobre!
-                    </p>
-                </div>
-            </section>
+            <!-- Context Banner -->
+            <div class="w-full glass-panel rounded-[20px] p-4 border-l-4 border-neon-blue bg-dark-surface/50 flex items-start gap-3">
+                <i class="fa-solid fa-circle-info text-neon-blue mt-1 flex-shrink-0"></i>
+                <p class="text-sm text-gray-300 font-bold leading-relaxed">
+                    Gerencie os perfis dos seus filhos. Veja o painel, passe o celular ou configure o PIN de cada aventureiro.
+                </p>
+            </div>
 
+            <!-- Children List -->
+            <section id="children-list" class="flex flex-col gap-4">
 
-            <!-- Evidence Submission Console -->
-            <section id="evidence-submission" class="flex flex-col gap-3">
-                <h3 class="font-display text-lg text-white flex items-center gap-2">
-                    <i class="fa-solid fa-upload text-neon-pink"></i> Enviar Evidência
-                </h3>
-                
-                <div class="glass-panel rounded-[20px] p-5 border border-neon-pink/30 flex flex-col gap-4 relative overflow-hidden shadow-[0_0_15px_rgba(236,72,153,0.1)]">
-                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-neon-pink opacity-10 blur-[30px] rounded-full pointer-events-none"></div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-xs font-bold text-gray-400 uppercase">Nota</label>
-                        <textarea class="input-gaming w-full rounded-xl p-3 text-sm text-white resize-none" rows="4" maxlength="100" placeholder="Descreva como foi realizar a missão..."></textarea>
-                        <span class="text-xs text-gray-500 text-right">0 / 100</span>
+                <!-- placeholder — substituído pelo JS ao carregar -->
+                <div class="glass-panel rounded-[24px] p-5 border border-gray-700 mb-4">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-900 to-teal-900
+                             border-2 border-neon-green flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
+                            L
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-display text-lg text-white">Lucas</h3>
+                                <i class="fa-solid fa-pen text-gray-600 text-xs"></i>
+                            </div>
+                            <span class="text-xs text-gray-400 font-bold">
+                                <i class="fa-solid fa-star text-yellow-400 text-[10px] mr-1"></i>— estrelas
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between rounded-xl px-4 py-3"
+                         style="background:rgba(11,14,20,0.65); border:1px solid rgba(34,197,94,0.35);">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-key text-green-400"></i>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">PIN</span>
+                            <span class="font-display text-green-400 text-base tracking-widest">carregando…</span>
+                        </div>
                     </div>
                 </div>
-            </section>
-            
-            <!-- Main CTA Area -->
-            <section id="main-cta" class="mt-4 mb-2">
-                 <button class="w-full btn-gaming py-4 rounded-[20px] bg-gradient-to-r from-neon-blue to-neon-purple text-white font-display text-lg shadow-[0_0_20px_rgba(168,85,247,0.4)] border-b-4 border-purple-900 hover:scale-[1.02] transition-transform flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-flag-checkered"></i> Finalizar Missão
+
+                <!-- Botão adicionar nova criança -->
+                <button type="button"
+                        class="btn-gaming w-full h-14 rounded-[16px] flex items-center justify-center gap-2 text-gray-400"
+                        style="border:2px dashed rgba(255,255,255,0.15); background:rgba(255,255,255,0.03);">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                    <span class="font-display text-base">Novo Explorador</span>
                 </button>
+
             </section>
 
         </div>
 
-        <!-- Bottom Navigation Bar (Copied 1:1 from context, updated Active state) -->
+        <!-- Bottom Navigation Bar -->
         <nav class="fixed bottom-0 left-0 w-full bg-dark-bg/95 backdrop-blur-xl border-t border-gray-800 pb-safe z-50">
             <div class="max-w-[430px] mx-auto flex justify-around items-center h-20 px-2">
-                <!-- Missões (Active) -->
-                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
-                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-gamepad text-neon-purple text-xl"></i>
-                    </div>
-                    <span class="text-[9px] font-bold uppercase text-neon-purple mt-8">Missões</span>
-                </a>
-
-                <!-- Loja (Inactive) -->
+                <!-- Painel (Inactive) -->
                 <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
-                    <i class="fa-solid fa-gift text-xl mb-1"></i>
-                    <span class="text-[9px] font-bold uppercase">Loja</span>
-                </a>
-
-                <!-- Sair (Inactive) -->
-                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
-                    <i class="fa-solid fa-right-from-bracket text-xl mb-1"></i>
-                    <span class="text-[9px] font-bold uppercase">Sair</span>
+                    <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Painel</span>
                 </a>
                 
+                <!-- Missões (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-list-check text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Missões</span>
+                </a>
+                
+                <!-- Filhos (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center w-20 h-full relative group">
+                    <div class="absolute -top-5 w-14 h-14 rounded-full bg-dark-surface border-2 border-neon-purple shadow-neon-purple flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-users text-neon-purple text-xl"></i>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase text-neon-purple mt-8">Filhos</span>
+                </a>
+                
+                <!-- Recompensas (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-gift text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Prêmios</span>
+                </a>
+                
+                <!-- Aprovação (Inactive) -->
+                <a href="#" class="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-check-double text-xl mb-1"></i>
+                    <span class="text-[9px] font-bold uppercase">Validar</span>
+                </a>
             </div>
         </nav>
 
     </main>
 
-    <style>
-        .animate-spin-slow {
-            animation: spin 3s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
 
-  <script>
-    // nav liberada
-  </script>
+  <script>/* lógica movida para tarefito-nav.js */</script>
     <script src="tarefito-supabase.js"></script>
     <script src="tarefito-nav.js"></script>
 </body>
