@@ -838,7 +838,8 @@ async function _submitReward() {
   if (!cost || cost < 1) return _toast('Defina o custo em estrelas!', 'err');
 
   try {
-    await DB.createReward(family.id, { name, cost });
+    const parentId = family.owner_id || family.responsible_id || family.id;
+    await DB.createReward(parentId, { name, cost });
     _toast('"' + name + '" adicionado! 🎁', 'ok');
     if (nameEl) nameEl.value = '';
     if (costEl) costEl.value = '';
