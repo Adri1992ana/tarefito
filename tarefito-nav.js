@@ -934,7 +934,7 @@ async function _submitMissionDone() {
   if (!mission) return _toast('Sessão expirada', 'err');
   const note = document.querySelector('#evidence-submission textarea')?.value?.trim() || '';
   try {
-    await DB.updateTaskStatus(mission.id, 'submitted');
+    await DB.updateTaskStatus(mission.id, 'submitted', note ? { evidence_note: note } : {});
     DB.mission.clear();
     _toast('Missão enviada para aprovação! ⭐', 'ok');
     setTimeout(() => Tarefito.navigate('dashboardCrianca'), 1500);

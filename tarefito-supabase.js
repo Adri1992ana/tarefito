@@ -158,15 +158,17 @@ const DB = {
     return db.get('tasks', p);
   },
   async createTask(parentId, data) {
-    return db.post('tasks', Object.assign({ parent_id: parentId, done: false }, data));
+    return db.post('tasks', Object.assign({ parent_id: parentId, done: false, status: 'pending' }, data));
   },
-  async updateTaskStatus(taskId, status) {
-    return db.patch('tasks', { done: status === 'approved' }, 'id=eq.' + taskId);
+  async updateTaskStatus(taskId, status, extra = {}) {
+    const updates = { status, ...extra };
+    if (status === 'approved') updates.done = true;
+    return db.patch('tasks', updates, 'id=eq.' + taskId);
   },
   async getPendingApproval(parentId) {
     return db.get('tasks',
       'parent_id=eq.' + parentId +
-      '&done=eq.false' +
+      '&status=eq.submitted' +
       '&select=*' +
       '&order=created_at.desc'
     );
