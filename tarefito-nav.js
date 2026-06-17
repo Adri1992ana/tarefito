@@ -733,7 +733,11 @@ async function _loadPendingTasks() {
             <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
           </div>
         </div>
-        ${t.evidence_note ? `<div class="bg-dark-surface rounded-xl p-3 border border-gray-700">
+        ${t.description ? `<div class="bg-dark-bg/60 rounded-xl p-3 border border-gray-700">
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Missão</p>
+          <p class="text-sm text-gray-300">${t.description}</p></div>` : ''}
+        ${t.evidence_note ? `<div class="bg-dark-surface rounded-xl p-3 border border-neon-cyan/30">
+          <p class="text-xs font-bold text-neon-cyan uppercase tracking-wider mb-1">Nota da criança</p>
           <p class="text-sm text-gray-300 italic">"${t.evidence_note}"</p></div>` : ''}
         <div class="flex gap-3">
           <button class="btn-aprovar btn-gaming flex-1 h-12 rounded-xl bg-gradient-to-r
@@ -918,16 +922,12 @@ function _loadMissionDetail() {
   const mission = DB.mission.get();
   if (!mission) return;
 
-  const titleEl = document.querySelector('#mission-header h2, #mission-header .font-display');
-  if (titleEl) titleEl.textContent = mission.name;
+  const pageTitleEl = document.getElementById('mission-page-title');
+  if (pageTitleEl && mission.name) pageTitleEl.textContent = mission.name;
 
-  const starsEl = document.querySelector('#mission-header .font-display.text-xl, #mission-header .text-yellow-400');
-  if (starsEl && starsEl.textContent.includes('+')) starsEl.textContent = '+' + mission.stars;
-
-  if (mission.description) {
-    const descEl = document.querySelector('#mission-description p');
-    if (descEl) descEl.textContent = mission.description;
-  }
+  const descEl = document.getElementById('mission-desc-text') ||
+                 document.querySelector('#mission-description p');
+  if (descEl) descEl.textContent = mission.description || 'Sem descrição adicional.';
 }
 
 async function _submitMissionDone() {
