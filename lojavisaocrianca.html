@@ -229,129 +229,19 @@
                         </div>
                     </div>
                     
-                    <button class="w-12 h-12 rounded-2xl bg-dark-surface border-2 border-neon-cyan/50 flex items-center justify-center shadow-neon-cyan relative hover:bg-neon-cyan/20 transition-colors z-10">
-                        <i class="fa-solid fa-plus text-neon-cyan text-xl"></i>
-                    </button>
                 </div>
             </section>
 
-            <!-- Search and Filter Bar -->
-            <section id="search-filter" class="flex flex-col gap-4">
-                <div class="flex gap-3">
-                    <div class="flex-1 relative">
-                        <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" placeholder="Buscar recompensas..." class="w-full h-12 bg-dark-surface border border-gray-700 rounded-xl pl-12 pr-4 text-sm text-white focus:border-neon-purple focus:outline-none transition-colors">
-                    </div>
-                    <button class="w-12 h-12 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center text-white hover:border-neon-purple transition-colors">
-                        <i class="fa-solid fa-sliders"></i>
-                    </button>
-                </div>
-                
-                <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                    <button class="shrink-0 px-4 py-2 rounded-xl bg-neon-purple/20 border border-neon-purple/50 text-neon-purple text-xs font-bold uppercase tracking-wider">
-                        Todos
-                    </button>
-                </div>
-            </section>
+        
 
             <!-- Reward Catalog Grid -->
             <section id="reward-catalog" class="flex flex-col gap-4">
                 <div class="flex justify-between items-end">
-                    <h2 class="font-display text-xl text-white">Destaques</h2>
-                    <a href="#" class="text-xs font-bold text-neon-cyan hover:underline">Ver Todos</a>
+                    <h2 class="font-display text-xl text-white">Recompensas</h2>
+                    
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Card 1: Common -->
-                    <div class="glass-panel rounded-[20px] p-3 border border-neon-green/30 flex flex-col gap-3 relative overflow-hidden group">
-                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-green opacity-10 blur-[20px] rounded-full pointer-events-none"></div>
-                        
-                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <img class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/cf5f719deb-5223cba5e849847c92ef.png" alt="3D illustration of a colorful game controller, vibrant, neon accents, dark background" />
-                        </div>
-
-                        <div class="flex flex-col gap-1">
-
-                            <h3 class="font-display text-sm text-white truncate">1h de Videogame</h3>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
-                                <span class="font-display text-sm text-yellow-400">50</span>
-                            </div>
-                        </div>
-                        
-                        <button class="w-full py-2 rounded-lg bg-dark-surface border border-neon-green/50 text-[10px] font-bold text-neon-green uppercase hover:bg-neon-green/20 transition-colors">
-                            Resgatar
-                        </button>
-                    </div>
-
-                    <!-- Card 2: Epic -->
-                    <div class="glass-panel rounded-[20px] p-3 border border-neon-purple/50 flex flex-col gap-3 relative overflow-hidden group shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-purple opacity-20 blur-[20px] rounded-full pointer-events-none"></div>
-                        
-                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <img class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/250a6aa5bd-b26aac186e11ae93ada0.png" alt="3D illustration of a movie ticket and popcorn, vibrant, neon purple accents, dark background" />
-                        </div>
-
-                        <div class="flex flex-col gap-1">
-                            <h3 class="font-display text-sm text-white truncate">Noite de Cinema</h3>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
-                                <span class="font-display text-sm text-yellow-400">150</span>
-                            </div>
-                        </div>
-                        
-                        <button class="w-full py-2 rounded-lg bg-neon-purple text-[10px] font-bold text-white uppercase shadow-neon-purple hover:bg-purple-500 transition-colors">
-                            Resgatar
-                        </button>
-                    </div>
-                    
-                    <!-- Card 3: Legendary -->
-                    <div class="glass-panel rounded-[20px] p-3 border border-neon-cyan/50 flex flex-col gap-3 relative overflow-hidden group shadow-[0_0_15px_rgba(6,182,212,0.1)]">
-                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-cyan opacity-20 blur-[20px] rounded-full pointer-events-none"></div>
-                        
-                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <img class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/08c1fa7347-93b9951fca916015805d.png" alt="3D illustration of a new toy or action figure box, glowing cyan accents, dark background" />
-                        </div>
-
-                        <div class="flex flex-col gap-1">
-                            <h3 class="font-display text-sm text-white truncate">Brinquedo Novo</h3>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
-                                <span class="font-display text-sm text-yellow-400">500</span>
-                            </div>
-                        </div>
-                        
-                        <button class="w-full py-2 rounded-lg bg-dark-surface border border-gray-600 text-[10px] font-bold text-gray-400 uppercase cursor-not-allowed flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-lock text-xs"></i> Bloqueado
-                        </button>
-                    </div>
-
-                    <!-- Card 4: Common -->
-                    <div class="glass-panel rounded-[20px] p-3 border border-neon-green/30 flex flex-col gap-3 relative overflow-hidden group">
-                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-neon-green opacity-10 blur-[20px] rounded-full pointer-events-none"></div>
-                        
-                        <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <img class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/2196a1076e-f65b42e48be2aa93e525.png" alt="3D illustration of a delicious ice cream cone, vibrant colors, dark background" />
-                            <!-- Pending Approval Badge -->
-                            <div class="absolute top-2 right-2 w-6 h-6 rounded-full bg-dark-surface border border-yellow-400 flex items-center justify-center">
-                                <i class="fa-solid fa-clock text-yellow-400 text-[10px]"></i>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col gap-1">
-
-                            <h3 class="font-display text-sm text-white truncate">—</h3>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-star text-yellow-400 text-xs shadow-[0_0_10px_rgba(250,204,21,0.5)] rounded-full"></i>
-                                <span class="font-display text-sm text-yellow-400">30</span>
-                            </div>
-                        </div>
-                        
-                        <button class="w-full py-2 rounded-lg bg-dark-surface border border-yellow-400/50 text-[10px] font-bold text-yellow-400 uppercase cursor-not-allowed">
-                            Pendente
-                        </button>
-                    </div>
-                </div>
+                <div class="grid grid-cols-2 gap-4"></div>
             </section>
 
             <!-- Recent Activity / Status -->
