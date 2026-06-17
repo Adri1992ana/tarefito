@@ -27,7 +27,7 @@ const Tarefito = {
 // ── Atalhos globais ──────────────────────────────────────────
 function goBack()             { Tarefito.goBack(); }
 function goToLogin()          { auth.signOut().then(() => Tarefito.navigate('login')); }
-function goToDashboard()      { Tarefito.navigate('gerenciarCriancas'); }
+function goToDashboard()      { Tarefito.navigate('dashboard'); }
 function navigateToCadastro() { Tarefito.navigate('cadastro'); }
 
 // ── Moldura mobile ───────────────────────────────────────────
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             const session = await auth.signIn(email, pass);
             await DB.getOrCreateFamily(session.user.id, session.user.user_metadata?.full_name || 'Responsável');
-            Tarefito.navigate('gerenciarCriancas');
+            Tarefito.navigate('dashboard');
           } catch (e) {
             console.error(e);
             btn.innerHTML = 'INICIAR MISSÃO <i class="fa-solid fa-rocket"></i>';
@@ -324,15 +324,18 @@ async function _showAddChildForm() {
 
   const modal = document.createElement('div');
   modal.id = 'tf-add-child-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;' +
-    'display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;' +
+    'background:rgba(0,0,0,0.85);z-index:9998;' +
+    'display:flex;align-items:flex-start;justify-content:center;' +
+    'padding:20px;overflow-y:auto;box-sizing:border-box;';
 
   // Gera PIN automático
   const autoPin = _generatePin();
 
   modal.innerHTML = `
     <div style="background:#13131a;border:1px solid rgba(168,85,247,0.4);border-radius:24px;
-                padding:28px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(168,85,247,0.2);">
+                padding:28px;width:100%;max-width:380px;box-shadow:0 0 40px rgba(168,85,247,0.2);
+                margin:auto;flex-shrink:0;">
       <h2 style="color:#fff;font-family:'Fredoka One',sans-serif;font-size:20px;margin:0 0 20px;">
         Novo Explorador
       </h2>
