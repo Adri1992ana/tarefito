@@ -199,6 +199,12 @@ const DB = {
   async requestRedemption(childId, rewardId, starCost) {
     return db.post('redemptions', { child_id: childId, reward_id: rewardId, star_cost: starCost, status: 'pending' });
   },
+  async getRedemptions(childId) {
+    return db.get('redemptions',
+      'child_id=eq.' + childId +
+      '&select=*&order=created_at.desc&limit=10'
+    );
+  },
 };
 
 // ─── Guard de auth ─────────────────────────────────────────────

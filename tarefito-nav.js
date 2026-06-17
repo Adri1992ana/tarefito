@@ -942,6 +942,17 @@ async function _submitMissionDone() {
   } catch(e) { _toast('Erro: ' + (e?.message||''), 'err'); }
 }
 
+function _relativeDate(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  const now = new Date();
+  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'Hoje';
+  if (diffDays === 1) return 'Ontem';
+  if (diffDays < 7) return diffDays + 'd atrás';
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
 async function _loadShop(child) {
   document.querySelectorAll('#star-balance .font-display, #star-balance .text-4xl').forEach(el => {
     if (/^\d+$/.test(el.textContent.trim())) el.textContent = child.stars || 0;
@@ -951,50 +962,95 @@ async function _loadShop(child) {
   if (!family) return;
 
   try {
-    // Usa owner_id pois rewards são indexados por parent_id (= owner_id do responsável)
     const parentId = family.owner_id || family.responsible_id || family.id;
-    const rewards = await DB.getRewards(parentId);
+    const [rewards, redemptions] = await Promise.all([
+      DB.getRewards(parentId),
+      DB.getRedemptions(child.id),
+    ]);
+
+    // ── Catálogo de prêmios ──
     const grid = document.querySelector('#reward-catalog .grid');
-    if (!grid) return;
-    if (!rewards?.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#6b7280;font-weight:700;">Nenhum prêmio disponível ainda.</div>';
-      return;
+    if (grid) {
+      if (!rewards?.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#6b7280;font-weight:700;">Nenhum prêmio disponível ainda.</div>';
+      } else {
+        grid.innerHTML = rewards.map(r => {
+          const can = (child.stars||0) >= r.cost;
+          return `
+            <div class="glass-panel rounded-[20px] p-3 border border-neon-purple/30 flex flex-col gap-3">
+              <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center">
+                <i class="fa-solid fa-gift text-neon-purple text-3xl"></i>
+              </div>
+              <div class="flex flex-col gap-1">
+                <h3 class="font-display text-sm text-white truncate">${r.name}</h3>
+                <div class="flex items-center gap-1">
+                  <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
+                  <span class="font-display text-sm text-yellow-400">${r.cost}</span>
+                </div>
+              </div>
+              <button class="btn-resgatar w-full py-2 rounded-lg text-[10px] font-bold uppercase transition-all
+                ${can ? 'bg-dark-surface border border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20'
+                      : 'bg-dark-surface border border-gray-600 text-gray-400 cursor-not-allowed opacity-60'}"
+                data-id="${r.id}" data-name="${r.name}" data-cost="${r.cost}"
+                ${can ? '' : 'disabled'}>
+                ${can ? 'Resgatar' : 'Faltam '+(r.cost-(child.stars||0))+'⭐'}
+              </button>
+            </div>`;
+        }).join('');
+
+        grid.querySelectorAll('.btn-resgatar:not([disabled])').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            if (!confirm('Resgatar "' + btn.dataset.name + '" por ' + btn.dataset.cost + '⭐?')) return;
+            try {
+              await DB.requestRedemption(child.id, btn.dataset.id, parseInt(btn.dataset.cost));
+              btn.disabled = true; btn.textContent = 'Pendente ⏳';
+              _toast('Resgate solicitado! Aguardando aprovação 🎉', 'ok');
+            } catch(e) { _toast('Erro: '+(e?.message||''), 'err'); }
+          });
+        });
+      }
     }
 
-    grid.innerHTML = rewards.map(r => {
-      const can = (child.stars||0) >= r.cost;
-      return `
-        <div class="glass-panel rounded-[20px] p-3 border border-neon-purple/30 flex flex-col gap-3">
-          <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center">
-            <i class="fa-solid fa-gift text-neon-purple text-3xl"></i>
-          </div>
-          <div class="flex flex-col gap-1">
-            <h3 class="font-display text-sm text-white truncate">${r.name}</h3>
-            <div class="flex items-center gap-1">
-              <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-              <span class="font-display text-sm text-yellow-400">${r.cost}</span>
-            </div>
-          </div>
-          <button class="btn-resgatar w-full py-2 rounded-lg text-[10px] font-bold uppercase transition-all
-            ${can ? 'bg-dark-surface border border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20'
-                  : 'bg-dark-surface border border-gray-600 text-gray-400 cursor-not-allowed opacity-60'}"
-            data-id="${r.id}" data-name="${r.name}" data-cost="${r.cost}"
-            ${can ? '' : 'disabled'}>
-            ${can ? 'Resgatar' : 'Faltam '+(r.cost-(child.stars||0))+'⭐'}
-          </button>
-        </div>`;
-    }).join('');
+    // ── Atividade Recente ──
+    const rewardMap = {};
+    (rewards || []).forEach(r => { rewardMap[r.id] = r.name; });
 
-    grid.querySelectorAll('.btn-resgatar:not([disabled])').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Resgatar "' + btn.dataset.name + '" por ' + btn.dataset.cost + '⭐?')) return;
-        try {
-          await DB.requestRedemption(child.id, btn.dataset.id, parseInt(btn.dataset.cost));
-          btn.disabled = true; btn.textContent = 'Pendente ⏳';
-          _toast('Resgate solicitado! Aguardando aprovação 🎉', 'ok');
-        } catch(e) { _toast('Erro: '+(e?.message||''), 'err'); }
-      });
-    });
+    const activityList = document.getElementById('recent-activity-list');
+    if (activityList) {
+      if (!redemptions?.length) {
+        activityList.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;font-weight:700;font-size:13px;">Nenhuma atividade ainda.</div>';
+      } else {
+        activityList.innerHTML = redemptions.map(rd => {
+          const rewardName = rewardMap[rd.reward_id] || 'Prêmio';
+          const dateLabel = _relativeDate(rd.created_at);
+          let iconClass, iconBg, textColor, statusText, borderClass;
+          if (rd.status === 'approved') {
+            iconClass = 'fa-check'; iconBg = 'bg-neon-green/20 border-neon-green';
+            textColor = 'text-neon-green'; statusText = 'Aprovado'; borderClass = 'border-gray-700';
+          } else if (rd.status === 'rejected') {
+            iconClass = 'fa-xmark'; iconBg = 'bg-red-400/20 border-red-400';
+            textColor = 'text-red-400'; statusText = 'Recusado'; borderClass = 'border-red-400/30';
+          } else {
+            iconClass = 'fa-clock'; iconBg = 'bg-yellow-400/20 border-yellow-400';
+            textColor = 'text-yellow-400'; statusText = 'Aguardando aprovação'; borderClass = 'border-yellow-400/30';
+          }
+          return `
+            <div class="flex items-center justify-between p-3 rounded-xl bg-dark-surface border ${borderClass}">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full ${iconBg} flex items-center justify-center">
+                  <i class="fa-solid ${iconClass} ${textColor} text-sm"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold text-white">${rewardName}</span>
+                  <span class="text-[10px] ${textColor}">${statusText}</span>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-gray-400">${dateLabel}</span>
+            </div>`;
+        }).join('');
+      }
+    }
+
   } catch(e) { console.error('[shop]', e); }
 }
 
