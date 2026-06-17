@@ -205,6 +205,17 @@ const DB = {
       '&select=*&order=created_at.desc&limit=10'
     );
   },
+  async getPendingRedemptions(childIds) {
+    if (!childIds?.length) return [];
+    return db.get('redemptions',
+      'child_id=in.(' + childIds.join(',') + ')' +
+      '&status=eq.pending' +
+      '&select=*&order=created_at.desc'
+    );
+  },
+  async updateRedemptionStatus(redemptionId, status) {
+    return db.patch('redemptions', { status }, 'id=eq.' + redemptionId);
+  },
 };
 
 // ─── Guard de auth ─────────────────────────────────────────────

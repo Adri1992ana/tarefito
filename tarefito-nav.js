@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     case 'gerenciarloja.html': {
       if (!requireAuthAndTrial()) break;
       _loadRewardsAdmin();
+      _loadPendingRedemptions();
       _onBtnText('Adicionar à Loja', _submitReward);
       _bindBackBtn();
       _bindBottomNav();
@@ -923,6 +924,112 @@ async function _loadRewardsAdmin() {
   } catch(e) { console.error('[rewards]', e); }
 }
 
+async function _loadPendingRedemptions() {
+  const family = DB.family.get();
+  if (!family) return;
+  const container = document.getElementById('pending-redemptions-list');
+  if (!container) return;
+
+  try {
+    const parentId = family.owner_id || family.responsible_id || family.id;
+    const children = await DB.getChildren(parentId);
+
+    if (!children?.length) {
+      container.innerHTML = '<p class="text-gray-500 text-sm text-center py-3">Nenhum explorador cadastrado.</p>';
+      return;
+    }
+
+    const childIds = children.map(c => c.id);
+    const [redemptions, rewards] = await Promise.all([
+      DB.getPendingRedemptions(childIds),
+      DB.getRewards(parentId),
+    ]);
+
+    const childMap = {};
+    children.forEach(c => { childMap[c.id] = c; });
+    const rewardMap = {};
+    rewards?.forEach(r => { rewardMap[r.id] = r; });
+
+    const badge = document.getElementById('redemptions-badge');
+    if (badge) {
+      if (redemptions?.length) {
+        badge.textContent = redemptions.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    container.innerHTML = '';
+
+    if (!redemptions?.length) {
+      container.innerHTML = '<p class="text-gray-500 text-sm text-center py-3">Nenhum pedido de resgate pendente.</p>';
+      return;
+    }
+
+    redemptions.forEach(rd => {
+      const child  = childMap[rd.child_id]  || {};
+      const reward = rewardMap[rd.reward_id] || {};
+      const div = document.createElement('div');
+      div.className = 'glass-panel rounded-[24px] p-5 border border-neon-cyan/30 flex flex-col gap-4';
+      div.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="font-display text-base text-white">${reward.name || 'Prêmio'}</p>
+            <span class="text-xs text-gray-400">${child.name || 'Aventureiro'} quer resgatar</span>
+          </div>
+          <div class="flex items-center gap-1 bg-dark-bg/80 px-2 py-1 rounded-lg border border-yellow-400/30">
+            <span class="text-xs font-display text-yellow-400">${rd.star_cost}</span>
+            <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn-aprovar-rd btn-gaming flex-1 h-12 rounded-xl bg-gradient-to-r
+            from-neon-green to-emerald-600 text-white font-display text-sm border-b-4
+            border-emerald-900 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i> Aprovar
+          </button>
+          <button class="btn-rejeitar-rd btn-gaming flex-1 h-12 rounded-xl bg-dark-surface
+            text-neon-pink font-bold text-sm border-2 border-neon-pink/50
+            flex items-center justify-center gap-2">
+            <i class="fa-solid fa-xmark"></i> Recusar
+          </button>
+        </div>`;
+
+      div.querySelector('.btn-aprovar-rd').addEventListener('click', async () => {
+        try {
+          const rows = await db.get('members', 'id=eq.' + rd.child_id + '&select=stars');
+          const cur  = rows?.[0]?.stars || 0;
+          await Promise.all([
+            DB.updateRedemptionStatus(rd.id, 'approved'),
+            DB.updateChild(rd.child_id, { stars: Math.max(0, cur - (rd.star_cost || 0)) }),
+          ]);
+          div.remove();
+          _toast('"' + (reward.name || 'Prêmio') + '" aprovado! 🎁', 'ok');
+          if (!container.querySelector('.glass-panel')) {
+            container.innerHTML = '<p class="text-gray-500 text-sm text-center py-3">Nenhum pedido de resgate pendente.</p>';
+            if (badge) badge.classList.add('hidden');
+          }
+        } catch(e) { _toast('Erro: ' + JSON.stringify(e), 'err'); }
+      });
+
+      div.querySelector('.btn-rejeitar-rd').addEventListener('click', async () => {
+        try {
+          await DB.updateRedemptionStatus(rd.id, 'rejected');
+          div.remove();
+          _toast('Pedido recusado.', 'ok');
+          if (!container.querySelector('.glass-panel')) {
+            container.innerHTML = '<p class="text-gray-500 text-sm text-center py-3">Nenhum pedido de resgate pendente.</p>';
+            if (badge) badge.classList.add('hidden');
+          }
+        } catch(e) { _toast('Erro', 'err'); }
+      });
+
+      container.appendChild(div);
+    });
+  } catch(e) { console.error('[redemptions]', e); }
+}
+
 async function _submitReward() {
   const family = DB.family.get();
   if (!family) return;
@@ -1063,13 +1170,24 @@ async function _loadShop(child) {
     ]);
 
     // ── Catálogo de prêmios ──
+    const pendingSet = new Set(
+      (redemptions || []).filter(r => r.status === 'pending').map(r => String(r.reward_id))
+    );
+
     const grid = document.querySelector('#reward-catalog .grid');
     if (grid) {
       if (!rewards?.length) {
         grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#6b7280;font-weight:700;">Nenhum prêmio disponível ainda.</div>';
       } else {
         grid.innerHTML = rewards.map(r => {
-          const can = (child.stars||0) >= r.cost;
+          const isPending = pendingSet.has(String(r.id));
+          const can = !isPending && (child.stars||0) >= r.cost;
+          const btnClass = isPending
+            ? 'bg-dark-surface border border-neon-cyan/40 text-neon-cyan cursor-not-allowed opacity-80'
+            : can
+              ? 'bg-dark-surface border border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20'
+              : 'bg-dark-surface border border-gray-600 text-gray-400 cursor-not-allowed opacity-60';
+          const btnLabel = isPending ? 'Pendente ⏳' : can ? 'Resgatar' : 'Faltam '+(r.cost-(child.stars||0))+'⭐';
           return `
             <div class="glass-panel rounded-[20px] p-3 border border-neon-purple/30 flex flex-col gap-3">
               <div class="w-full h-24 rounded-xl bg-dark-surface border border-gray-700 flex items-center justify-center">
@@ -1082,12 +1200,10 @@ async function _loadShop(child) {
                   <span class="font-display text-sm text-yellow-400">${r.cost}</span>
                 </div>
               </div>
-              <button class="btn-resgatar w-full py-2 rounded-lg text-[10px] font-bold uppercase transition-all
-                ${can ? 'bg-dark-surface border border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20'
-                      : 'bg-dark-surface border border-gray-600 text-gray-400 cursor-not-allowed opacity-60'}"
+              <button class="btn-resgatar w-full py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${btnClass}"
                 data-id="${r.id}" data-name="${r.name}" data-cost="${r.cost}"
-                ${can ? '' : 'disabled'}>
-                ${can ? 'Resgatar' : 'Faltam '+(r.cost-(child.stars||0))+'⭐'}
+                ${(isPending || !can) ? 'disabled' : ''}>
+                ${btnLabel}
               </button>
             </div>`;
         }).join('');
@@ -1098,6 +1214,7 @@ async function _loadShop(child) {
             try {
               await DB.requestRedemption(child.id, btn.dataset.id, parseInt(btn.dataset.cost));
               btn.disabled = true; btn.textContent = 'Pendente ⏳';
+              btn.className = btn.className.replace(/text-neon-purple|hover:bg-neon-purple\/20/g, '') + ' text-neon-cyan border-neon-cyan/40 opacity-80';
               _toast('Resgate solicitado! Aguardando aprovação 🎉', 'ok');
             } catch(e) { _toast('Erro: '+(e?.message||''), 'err'); }
           });
