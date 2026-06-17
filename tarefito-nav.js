@@ -8,6 +8,7 @@ const Tarefito = {
     login:             'login.html',
     cadastro:          'cadastro.html',
     gerenciarCriancas: 'gerenciarcriancas.html',
+    novoExplorador:    'novoexplorador.html',
     dashboard:         'dashboard.html',
     criarTarefa:       'criartarefa.html',
     aprovarTarefa:     'aprovartarefa.html',
@@ -131,6 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ════════════ GERENCIAR CRIANÇAS ════════════════════════
     case 'gerenciarcriancas.html': {
       if (!requireAuthAndTrial()) break;
+      const _pendingToast = sessionStorage.getItem('tf_pending_toast');
+      if (_pendingToast) { sessionStorage.removeItem('tf_pending_toast'); setTimeout(() => _toast(_pendingToast, 'ok'), 400); }
       _loadChildren();
       // Botão "ACESSAR PAINEL" — seletor exato
       document.querySelectorAll('button').forEach(btn => {
@@ -140,6 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       _bindBackBtn();
       _bindBottomNav();
+      break;
+    }
+
+    // ════════════ NOVO EXPLORADOR ════════════════════════════
+    case 'novoexplorador.html': {
+      if (!requireAuthAndTrial()) break;
+      _initNovoExplorador();
       break;
     }
 
@@ -270,7 +280,7 @@ async function _loadChildren() {
     'bg-dark-surface/30 flex items-center justify-center gap-3 text-gray-400 ' +
     'hover:text-neon-purple hover:border-neon-purple transition-all';
   addBtn.innerHTML = '<i class="fa-solid fa-plus text-lg"></i><span class="font-display text-base">Novo Explorador</span>';
-  addBtn.addEventListener('click', _showAddChildForm);
+  addBtn.addEventListener('click', () => Tarefito.navigate('novoExplorador'));
   list.appendChild(addBtn);
 }
 
@@ -315,6 +325,87 @@ function _childCardHTML(c) {
       </button>
     </div>
   </div>`;
+}
+
+function _initNovoExplorador() {
+  const pin = _generatePin();
+  document.getElementById('tf-pin-display').textContent = pin;
+
+  // Foco no nome
+  setTimeout(() => document.getElementById('tf-child-name')?.focus(), 150);
+
+  // Instrução: se já viu, oculta
+  if (sessionStorage.getItem('tf_instruction_seen') === '1') {
+    const card = document.getElementById('tf-instruction-card');
+    if (card) card.style.display = 'none';
+  }
+  document.getElementById('tf-instruction-ok')?.addEventListener('click', () => {
+    const card = document.getElementById('tf-instruction-card');
+    if (!card) return;
+    card.style.transition = 'opacity 0.3s';
+    card.style.opacity = '0';
+    setTimeout(() => { card.style.display = 'none'; }, 300);
+    try { sessionStorage.setItem('tf_instruction_seen', '1'); } catch(_) {}
+  });
+
+  // Copiar PIN
+  document.getElementById('tf-copy-pin')?.addEventListener('click', () => {
+    const pinVal = document.getElementById('tf-pin-display').textContent.trim();
+    const btn = document.getElementById('tf-copy-pin');
+    const onCopied = () => {
+      btn.textContent = '✓ Copiado!';
+      setTimeout(() => { btn.innerHTML = '📋 Copiar'; }, 2000);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(pinVal).then(onCopied).catch(() => { _legacyCopy(pinVal); onCopied(); });
+    } else { _legacyCopy(pinVal); onCopied(); }
+  });
+
+  // Regenerar PIN
+  document.getElementById('tf-regen-pin')?.addEventListener('click', () => {
+    document.getElementById('tf-pin-display').textContent = _generatePin();
+  });
+
+  // Voltar / Cancelar
+  document.getElementById('btn-back')?.addEventListener('click', () => Tarefito.navigate('gerenciarCriancas'));
+  document.getElementById('tf-cancel-child')?.addEventListener('click', () => Tarefito.navigate('gerenciarCriancas'));
+
+  // Salvar
+  document.getElementById('tf-save-child')?.addEventListener('click', async () => {
+    const name = document.getElementById('tf-child-name').value.trim();
+    const pinVal = document.getElementById('tf-pin-display').textContent.trim();
+    const family  = DB.family.get();
+    const session = DB.session.get();
+
+    if (!name) {
+      document.getElementById('tf-child-name').classList.add('border-red-500');
+      return;
+    }
+    if (!family || !session) return _toast('Sessão expirada, faça login novamente', 'err');
+
+    const parentId = session.user?.id || family.owner_id;
+    const saveBtn = document.getElementById('tf-save-child');
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    saveBtn.disabled = true;
+
+    try {
+      await DB.createChild(parentId, name, pinVal, 50);
+      sessionStorage.setItem('tf_pending_toast', name + ' adicionado com código ' + pinVal + '! 🚀');
+      Tarefito.navigate('gerenciarCriancas');
+    } catch(e) {
+      console.error(e);
+      saveBtn.innerHTML = '<i class="fa-solid fa-rocket text-sm"></i> Criar Explorador';
+      saveBtn.disabled = false;
+      _toast('Erro: ' + (e?.message || JSON.stringify(e)), 'err');
+    }
+  });
+}
+
+function _legacyCopy(text) {
+  const el = document.createElement('textarea');
+  el.value = text; el.style.position = 'fixed'; el.style.opacity = '0';
+  document.body.appendChild(el); el.select(); document.execCommand('copy');
+  document.body.removeChild(el);
 }
 
 async function _showAddChildForm() {
