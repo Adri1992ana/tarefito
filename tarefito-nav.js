@@ -1074,11 +1074,11 @@ async function _loadChildDashboard(child) {
     const missionSection = document.getElementById('active-missions');
     if (!missionSection) return;
 
-    const carousel = missionSection.querySelector('.flex.gap-4, .overflow-x-auto .flex, .flex.overflow-x-auto');
+    const carousel = missionSection.querySelector('.grid.grid-cols-2');
     if (!carousel) return;
 
     if (!pending.length) {
-      carousel.innerHTML = `<div class="text-center py-6 w-full">
+      carousel.innerHTML = `<div class="text-center py-6 col-span-2">
         <i class="fa-solid fa-trophy text-yellow-400 text-3xl mb-2 block"></i>
         <p class="text-white font-bold font-display">Todas as missões concluídas!</p>
       </div>`;
@@ -1086,7 +1086,7 @@ async function _loadChildDashboard(child) {
     }
 
     carousel.innerHTML = pending.map(t => `
-      <div class="snap-center shrink-0 w-[240px] glass-panel rounded-[24px] p-4 border
+      <div class="glass-panel rounded-[24px] p-4 border
            border-neon-blue/40 flex flex-col gap-3">
         <div class="flex justify-between items-start">
           <div class="w-12 h-12 rounded-xl bg-dark-bg border border-neon-blue/50 flex items-center justify-center">
