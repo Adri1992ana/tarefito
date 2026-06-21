@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       document.querySelectorAll('a').forEach(a => {
-        if (a.textContent.includes('Criar Base')) {
+        if (a.textContent.includes('Criar cadastro')) {
           a.addEventListener('click', e => { e.preventDefault(); Tarefito.navigate('cadastro'); });
         }
       });
